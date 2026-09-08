@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jagannath Sahoo — Cybersecurity · Systems · Software</title>
+  <meta name="description"
+    content="Cybersecurity researcher and software engineer exploring systems, networks, vulnerabilities and real-world software." />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/src/styles/main.css" />
+</head>
+
+<body>
+
+  <!-- ================================================================= -->
+  <!-- MINIMAL HEADER NAVIGATION                                         -->
+  <!-- ================================================================= -->
+  <header id="site-header" class="site-header">
+    <a href="#" class="nav-brand">JAGANNATH SAHOO</a>
+    <nav class="nav-links">
+      <a href="#work" class="nav-item">WORK</a>
+      <a href="#about" class="nav-item">ABOUT</a>
+      <a href="#research" class="nav-item">RESEARCH</a>
+      <a href="#contact" class="nav-item">CONTACT</a>
+    </nav>
+  </header>
+
+  <!-- ================================================================= -->
+  <!-- EDITORIAL CONTENT OVERLAY                                         -->
+  <!-- ================================================================= -->
+  <main id="main-content">
+
+    <section id="hero" class="hero-section">
+      <!-- 3D MASTER WEBGL CANVAS (EYE GENERATION → GLOBE FORMATION) -->
+      <canvas id="internet-globe-canvas" class="webgl-canvas"></canvas>
+
+      <div class="hero-container">
+        <h1 class="hero-title">
+          Hi,<br />
+          it's me JAGAnnath.<br />
+          <span class="hero-sub">A small techie..</span>
+        </h1>
+
+        <div class="hero-actions">
+          <a href="#work" class="btn-editorial">
+            <span>VIEW WORK</span>
+            <span class="arrow-down">↓</span>
+          </a>
+        </div>
+
+        <!-- Dynamic Telemetry Sequence Status -->
+        <div class="hero-telemetry">
+          <div class="telemetry-badge">
+            <span class="pulse-dot"></span>
+            <span id="scene-status-label">[OPTIC FIBER CONVERGENCE // BIOMETRIC IRIS ASSEMBLY]</span>
+          </div>
+          <div class="telemetry-meta">
+            <span>[ 16,000+ NETWORK NODES ]</span>
+            <span>/</span>
+            <span>[ GLOBAL ROUTING TELEMETRY ]</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 01 — SELECTED WORK -->
+    <section id="work" class="section-layout">
+      <div class="section-container">
+        <div class="section-badge">[ 01 ] SELECTED WORK</div>
+
+        <div class="editorial-case-list">
+
+          <!-- 01 AGENTSHIELD -->
+          <article class="case-study-item">
+            <div class="case-index">01</div>
+            <div class="case-content">
+              <h2 class="case-title">AGENTSHIELD</h2>
+              <div class="case-category">eBPF / Network Security / Linux / Windows</div>
+              <p class="case-summary">
+                A network monitoring and threat detection platform. Utilizes eBPF tracing programs directly in the
+                socket layer to inspect network packet exchanges with sub-microsecond latency overhead and deep
+                telemetry observability.
+              </p>
+              <div class="case-technical-specs">
+                <span>[ KERNEL SPACE VERIFIER ]</span>
+                <span>[ RING BUFFER TELEMETRY ]</span>
+                <span>[ TC HOOK INGRESS/EGRESS ]</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 02 ARM / TF-M -->
+          <article class="case-study-item">
+            <div class="case-index">02</div>
+            <div class="case-content">
+              <h2 class="case-title">ARM / TF-M SECURITY RESEARCH</h2>
+              <div class="case-category">Low-Level Systems / Hardware Security / ARM TrustZone / Microcontroller</div>
+              <p class="case-summary">
+                Low-level security research involving ARM Trusted Firmware-M, memory boundaries, validation paths and
+                exploitability analysis for embedded microcontroller architectures.
+              </p>
+              <div class="case-technical-specs">
+                <span>[ TRUSTZONE ISOLATION ]</span>
+                <span>[ NS-BUFFER VALIDATION ]</span>
+                <span>[ PRIVILEGE ESCALATION AUDIT ]</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 03 E-COMMERCE -->
+          <article class="case-study-item">
+            <div class="case-index">03</div>
+            <div class="case-content">
+              <h2 class="case-title">E-COMMERCE PLATFORM</h2>
+              <div class="case-category">Full-Stack Engineering / React / Node.js / MongoDB / Distributed Telemetry
+              </div>
+              <p class="case-summary">
+                Architected a high-concurrency distributed e-commerce backend and responsive client application with
+                microservice-oriented data pipelines, idempotent transaction processing, and end-to-end operational
+                observability.
+              </p>
+              <div class="case-technical-specs">
+                <span>[ IDEMPOTENT TRANSACTION PIPELINE ]</span>
+                <span>[ EVENT STREAMING ]</span>
+                <span>[ DISTRIBUTED CACHING ]</span>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 02 — SYSTEMS & VULNERABILITY RESEARCH -->
+    <section id="research" class="section-layout">
+      <div class="section-container">
+        <div class="section-badge">[ 02 ] SYSTEMS &amp; VULNERABILITY RESEARCH</div>
+
+        <div class="editorial-case-list">
+
+          <article class="case-study-item">
+            <div class="case-index">R-01</div>
+            <div class="case-content">
+              <h2 class="case-title">LINUX KERNEL eBPF BOUNDS INTEGER TRUNCATION</h2>
+              <div class="case-category">CVE-2025-44912 · Kernel Bounds Calculation &amp; Verifier Pruning</div>
+              <p class="case-summary">
+                Identified an integer truncation primitive within 64-bit bounds calculations during eBPF verifier state
+                pruning. Coordinated vulnerability disclosure and proof-of-concept validation with upstream maintainers.
+              </p>
+              <div class="case-technical-specs">
+                <span class="status-amber">● DISCLOSED / PATCH COMMITTED</span>
+                <span>[ VERIFIER ALIVE PATH ]</span>
+                <span>[ 64-BIT SCALAR BOUNDS ]</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="case-study-item">
+            <div class="case-index">R-02</div>
+            <div class="case-content">
+              <h2 class="case-title">CONSTANT-TIME POST-QUANTUM LATTICE CRYPTO DEFENSE</h2>
+              <div class="case-category">ML-KEM / Kyber · Micro-Architectural Side-Channel Verification</div>
+              <p class="case-summary">
+                Formal analysis of polynomial multiplication routines in next-generation post-quantum lattice
+                cryptosystems to verify instruction-level constant-time execution against cache-timing and branch
+                predictor leaks.
+              </p>
+              <div class="case-technical-specs">
+                <span class="status-cyan">● FORMAL RESEARCH</span>
+                <span>[ NTT POLYNOMIAL MULT ]</span>
+                <span>[ CACHE SIDE-CHANNEL RESILIENT ]</span>
+              </div>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 03 — ABOUT -->
+    <section id="about" class="section-layout">
+      <div class="section-container">
+        <div class="section-badge">[ 03 ] ABOUT</div>
+
+        <div class="about-grid">
+          <div class="about-primary">
+            <h2 class="about-headline">
+              CURIOUS ABOUT HOW SYSTEMS ACTUALLY WORK.
+            </h2>
+            <p class="about-lead">
+              I build systems, investigate how they break, and turn complex problems into working software. My work sits
+              at the intersection of low-level systems engineering, offensive security research, network protocol
+              resilience, and distributed software.
+            </p>
+          </div>
+
+          <div class="about-disciplines">
+            <div class="disciplines-header">CORE DISCIPLINES</div>
+            <ul class="disciplines-list">
+              <li>— Cybersecurity</li>
+              <li>— Systems</li>
+              <li>— Networking</li>
+              <li>— Low-Level Software</li>
+              <li>— Full-Stack Engineering</li>
+              <li>— Security Research</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 04 — TECHNICAL SECTION -->
+    <section id="tech" class="section-layout">
+      <div class="section-container">
+        <div class="section-badge">[ 04 ] TECHNICAL SECTION</div>
+
+        <div class="tech-index-wrapper">
+          <p class="tech-index-sub">TYPOGRAPHIC TECHNOLOGY INDEX</p>
+          <div class="tech-index-grid">
+            <div class="tech-tag">C</div>
+            <div class="tech-tag">C++</div>
+            <div class="tech-tag">Python</div>
+            <div class="tech-tag">JavaScript</div>
+            <div class="tech-tag">TypeScript</div>
+            <div class="tech-tag">Go</div>
+            <div class="tech-tag">Rust</div>
+            <div class="tech-tag">Linux</div>
+            <div class="tech-tag">eBPF</div>
+            <div class="tech-tag">TCP / IP</div>
+            <div class="tech-tag">BGP Routing</div>
+            <div class="tech-tag">ARM TrustZone</div>
+            <div class="tech-tag">GDB / LLDB</div>
+            <div class="tech-tag">Ghidra</div>
+            <div class="tech-tag">Wireshark</div>
+            <div class="tech-tag">Git</div>
+            <div class="tech-tag">Docker</div>
+            <div class="tech-tag">React</div>
+            <div class="tech-tag">Node.js</div>
+            <div class="tech-tag">Three.js / WebGL</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 05 — CONTACT -->
+    <section id="contact" class="section-layout section-contact">
+      <div class="section-container">
+        <div class="section-badge">[ 05 ] CONTACT &amp; CORRESPONDENCE</div>
+
+        <div class="about-grid">
+          <div>
+            <h2 class="about-headline">
+              INITIATE SECURE CORRESPONDENCE.
+            </h2>
+            <p class="about-lead" style="margin-bottom: 32px;">
+              Available for systems engineering, security research initiatives, and technical architecture
+              consultations.
+            </p>
+            <a href="mailto:jagannathsahoo634@gmail.com" class="btn-editorial">
+              <span>jagannathsahoo634@gmail.com ↗</span>
+            </a>
+          </div>
+
+          <div class="pgp-card">
+            <div class="disciplines-header">PGP PUBLIC KEY FINGERPRINT</div>
+            <div class="pgp-fingerprint">
+              9F82 4B11 7C20 EA39 8810<br />
+              DE2A 04B9 1337 D82E A401
+            </div>
+            <div class="pgp-sub">
+              ALGORITHM: ED25519 · KEY ID: 0x1337D82E · ENCRYPTED DISPATCH
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Minimal Footer -->
+    <footer class="site-footer">
+      <div class="section-container footer-inner">
+        <div>JAGANNATH SAHOO · CYBERSECURITY &amp; SYSTEMS ENGINEER</div>
+        <div>AUTONOMOUS 3D CYBERSECURITY ENGINE © 2026</div>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- Master Entrypoint -->
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
+ALGORITHM: ED25519 · KEY ID: 0x1337D82E · ENCRYPTED DISPATCH
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Minimal Footer -->
+<footer class="site-footer">
+  <div class="section-container footer-inner">
+    <div>JAGANNATH SAHOO · CYBERSECURITY &amp; SYSTEMS ENGINEER</div>
+    <div>AUTONOMOUS 3D CYBERSECURITY ENGINE © 2026</div>
+  </div>
+</footer>
+
+</main>
+
+<!-- Master Entrypoint -->
+<script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
