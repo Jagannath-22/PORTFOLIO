@@ -20,6 +20,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     );
+
+    if (statusEl) {
+      statusEl.style.cursor = 'pointer';
+      statusEl.title = 'Click to replay cosmic sequence';
+      statusEl.addEventListener('click', () => {
+        globeScene.replay();
+      });
+    }
   }
 
   // Header scroll state and scroll progress

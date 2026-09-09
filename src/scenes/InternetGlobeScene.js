@@ -5,12 +5,11 @@ import { isPointOnLand, latLonToXYZ } from "../utils/geoUtils.js";
  * InternetGlobeScene — Master Cinematic Cybersecurity Scene.
  *
  * SEQUENCE:
- * COSMIC PARTICLES → FIBER-OPTIC EYE → GAZE LEFT → GAZE RIGHT → GAZE CENTER
- * → ONE BLINK (PUPIL 100% COVERED) → OPEN → ZOOM INTO CIRCULAR PUPIL
+ * DEEP SPACE → 3D SPIRAL GALAXY FORMATION → CINEMATIC ZOOM-OUT
  * → SEAMLESS TRANSITION TO EXISTING BGP GLOBE → INTERACTIVE GLOBE & BGP TELEMETRY
  *
  * RULES:
- * - The opening eye sequence is 100% autonomous inside the 100vh viewport.
+ * - The opening galaxy sequence is 100% autonomous inside the 100vh viewport.
  * - Zero automatic scrolling.
  * - The existing BGP globe geometry, density, routing arcs, and interaction are PRESERVED.
  */
@@ -34,7 +33,7 @@ export class InternetGlobeScene {
       0.1,
       1000,
     );
-    this.camera.position.set(0, 0, 13);
+    this.camera.position.set(0, 0, 4);
 
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
@@ -58,6 +57,14 @@ export class InternetGlobeScene {
     this.rotationVelocity = { x: 0.0015, y: 0.002 };
     this.globeRotation = { x: 0.22, y: 0.0 };
 
+    // Galaxy interaction & inertia: rotates on itself around its central axis, default horizontal tilt 1.20 rad
+    this.galaxyTiltX = 1.20;
+    this.galaxySpinAngle = 0.0;
+    this.galaxySpinVelocity = 0.0;
+    this.galaxyTiltVelocity = 0.0;
+    this.galaxyPointerLocal = new THREE.Vector3(999, 999, 0);
+    this.galaxyPointerActive = false;
+
     // Configuration
     this.globeRadius = 4.2;
     this.particleCount = 68000;
@@ -65,7 +72,7 @@ export class InternetGlobeScene {
     // Build scene layers
     this.initLighting();
     this.initCosmicBackgroundField();
-    this.initEyeScene();
+    this.initGalaxyIntro();
     this.initBGPExistingGlobe();
     this.initEventHandlers();
   }
@@ -133,172 +140,228 @@ export class InternetGlobeScene {
   }
 
   // =========================================================================
-  // 2. THE OPTICAL-FIBER COSMIC EYE (3D System with User's Authentic Texture)
   // =========================================================================
-  initEyeScene() {
-    this.eyeSceneGroup = new THREE.Group();
-    this.eyeSceneGroup.position.set(0, 0, 0);
-    this.scene.add(this.eyeSceneGroup);
+  // 2. CINEMATIC 3D SPIRAL GALAXY INTRO (Astra-Grade Logarithmic Architecture)
+  // =========================================================================
+  initGalaxyIntro() {
+    this.galaxyGroup = new THREE.Group();
+    this.galaxyGroup.position.set(0, 0, 0);
+    this.scene.add(this.galaxyGroup);
 
-    // Front-facing eye container with 3D gaze tracking
-    this.eyeContainer = new THREE.Group();
-    this.eyeSceneGroup.add(this.eyeContainer);
+    // Galaxy Configuration — 16,000 stellar points for dense, high-fidelity arms
+    this.galaxyParticleCount = 16000;
+    const coreCount = 3800;
 
-    // Load the user's authentic cosmic fiber-optic eye texture with 4K anisotropic filtering
-    const textureLoader = new THREE.TextureLoader();
-    this.eyeTexture = textureLoader.load("/textures/cosmic-eye.jpg");
-    const maxAniso = this.renderer.capabilities.getMaxAnisotropy();
-    this.eyeTexture.anisotropy = maxAniso;
-    this.eyeTexture.generateMipmaps = true;
-    this.eyeTexture.minFilter = THREE.LinearMipmapLinearFilter;
-    this.eyeTexture.magFilter = THREE.LinearFilter;
-    this.eyeTexture.colorSpace = THREE.SRGBColorSpace;
+    // Buffers for galaxy particles
+    const positions = new Float32Array(this.galaxyParticleCount * 3);
+    const colors = new Float32Array(this.galaxyParticleCount * 3);
+    const sizes = new Float32Array(this.galaxyParticleCount);
+    const isPixels = new Float32Array(this.galaxyParticleCount); // 15% pixels, 85% cosmic particles
 
-    // A. 3D CURVED EYE MESH (Anatomical Corneal Bulge)
-    // 16:9 aspect ratio matching the 1024x576 source image
-    const eyeWidth = 11.2;
-    const eyeHeight = 6.3;
-    const eyeGeo = new THREE.PlaneGeometry(eyeWidth, eyeHeight, 64, 48);
-    const pos = eyeGeo.attributes.position;
-    for (let i = 0; i < pos.count; i++) {
-      const x = pos.getX(i);
-      const y = pos.getY(i);
-      const nx = x / (eyeWidth * 0.5);
-      const ny = y / (eyeHeight * 0.5);
-      const distSq = nx * nx + ny * ny;
-      // Eyeball curvature: center projects forward toward viewer
-      const bulge = Math.max(0.0, 1.0 - distSq);
-      const z = Math.pow(bulge, 1.4) * 0.85;
-      pos.setZ(i, z);
+    this.galaxySpiralTargets = new Float32Array(this.galaxyParticleCount * 3);
+    this.galaxyScatteredStart = new Float32Array(this.galaxyParticleCount * 3);
+    this.galaxyVelocities = new Float32Array(this.galaxyParticleCount * 3);
+    this.galaxyRandomPhases = new Float32Array(this.galaxyParticleCount);
+
+    // Astronomical star palette: crisp white starlight dominant (plurality/max), with rich celestial colors
+    const colCoreWhite = new THREE.Color(0xffffff);
+    const colStarWhite = new THREE.Color(0xf4f7fd);
+
+    // Colored starlight palette (converting 30% of white particles to vivid celestial & cyber hues)
+    const coloredPalette = [
+      new THREE.Color(0x00f0ff), // Vivid Cyber Cyan
+      new THREE.Color(0x38bdf8), // Electric Azure
+      new THREE.Color(0xffc857), // Warm Solar Gold
+      new THREE.Color(0xff9e00), // Radiant Amber
+      new THREE.Color(0xda46ff), // Neon Violet / Magenta
+      new THREE.Color(0x00f59b), // Emerald Mint
+      new THREE.Color(0xfb7185), // Coral Rose
+      new THREE.Color(0x9bd7ff), // Pale Starlight Blue
+      new THREE.Color(0xff7a00), // Warm Solar Orange
+      new THREE.Color(0xcae8ff), // Ice Cyan
+    ];
+
+    // 1. Dense Glowing Galactic Nucleus / Core (~3,800 stars)
+    for (let i = 0; i < coreCount; i++) {
+      const i3 = i * 3;
+      // Exponential falloff toward central singularity
+      const r = Math.pow(Math.random(), 2.2) * 1.35;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = (Math.random() - 0.5) * Math.PI * 0.7; // subtle vertical compression
+
+      const gx = r * Math.cos(theta) * Math.cos(phi);
+      const gy = r * Math.sin(theta) * Math.cos(phi) * 0.75;
+      const gz = r * Math.sin(phi) * 0.45;
+
+      this.galaxySpiralTargets[i3] = gx;
+      this.galaxySpiralTargets[i3 + 1] = gy;
+      this.galaxySpiralTargets[i3 + 2] = gz;
+
+      // Start positions: dispersed in deep space (for inward convergence stream)
+      const sAngle = Math.random() * Math.PI * 2;
+      const sPhi = Math.acos(2 * Math.random() - 1);
+      const sR = 18 + Math.random() * 22;
+      this.galaxyScatteredStart[i3] = Math.sin(sPhi) * Math.cos(sAngle) * sR;
+      this.galaxyScatteredStart[i3 + 1] = Math.sin(sPhi) * Math.sin(sAngle) * sR;
+      this.galaxyScatteredStart[i3 + 2] = Math.cos(sPhi) * sR;
+
+      positions[i3] = this.galaxyScatteredStart[i3];
+      positions[i3 + 1] = this.galaxyScatteredStart[i3 + 1];
+      positions[i3 + 2] = this.galaxyScatteredStart[i3 + 2];
+
+      this.galaxyRandomPhases[i] = Math.random() * Math.PI * 2;
+
+      // Exactly 15% pixel particles, 85% cosmic particles
+      isPixels[i] = Math.random() < 0.15 ? 1.0 : 0.0;
+
+      // Core colors: White remains majority (~58%), 30% converted to colored starlight
+      const roll = Math.random();
+      let col;
+      if (roll > 0.42) {
+        col = colCoreWhite;
+      } else {
+        col = coloredPalette[Math.floor(Math.random() * coloredPalette.length)];
+      }
+      colors[i3] = col.r;
+      colors[i3 + 1] = col.g;
+      colors[i3 + 2] = col.b;
+
+      // Core particle sizes: larger, intense glow
+      sizes[i] = 0.055 + Math.random() * 0.085;
     }
-    eyeGeo.computeVertexNormals();
 
-    // Shader Material: 4K crisp texture, seamless edge vignetting & almond blink
-    this.eyeShaderMat = new THREE.ShaderMaterial({
-      uniforms: {
-        uTexture: { value: this.eyeTexture },
-        uOpacity: { value: 0.0 },
-        uBlink: { value: 0.0 }, // 0.0 = open, 1.0 = fully closed
-        uTime: { value: 0.0 },
-      },
+    // 2. Majestic Logarithmic Spiral Arms (~12,200 stars)
+    // 2 primary logarithmic arms + 2 secondary branches (matching user reference 3rd pic)
+    for (let i = coreCount; i < this.galaxyParticleCount; i++) {
+      const i3 = i * 3;
+
+      // Arm distribution: 72% in 2 primary major arms, 28% in trailing spurs
+      const isMainArm = Math.random() > 0.28;
+      const armIndex = Math.floor(Math.random() * 2); // 0 or 1
+      const armBaseAngle = armIndex * Math.PI + (isMainArm ? 0 : 0.54);
+
+      // Radial distribution along logarithmic curve
+      const u = Math.pow(Math.random(), 1.28);
+      const r = 1.2 + u * 7.6; // 1.2 to 8.8
+
+      // Logarithmic spiral equation: theta = theta0 + b * ln(r/r0) + swirl
+      const winding = 2.85 * Math.log(r / 1.1) + r * 0.16;
+      const baseAngle = armBaseAngle + winding;
+
+      // Gaussian cross-section spread for realistic star cloud density
+      const spreadR = (Math.random() + Math.random() - 1.0) * (0.16 + r * 0.048);
+      const spreadAngle = (Math.random() + Math.random() - 1.0) * (0.11 + 0.018 * r);
+      const finalAngle = baseAngle + spreadAngle;
+      const finalR = Math.max(0.45, r + spreadR);
+
+      // Height thickness: thinner at outer edges, thicker near center
+      const zThickness = (Math.random() - 0.5) * (0.28 + 0.04 * r) * Math.exp(-r / 5.2);
+
+      this.galaxySpiralTargets[i3] = Math.cos(finalAngle) * finalR;
+      this.galaxySpiralTargets[i3 + 1] = Math.sin(finalAngle) * finalR * 0.65;
+      this.galaxySpiralTargets[i3 + 2] = zThickness;
+
+      // Scattered start positions for inward collapse
+      const sAngle = Math.random() * Math.PI * 2;
+      const sPhi = Math.acos(2 * Math.random() - 1);
+      const sR = 20 + Math.random() * 24;
+      this.galaxyScatteredStart[i3] = Math.sin(sPhi) * Math.cos(sAngle) * sR;
+      this.galaxyScatteredStart[i3 + 1] = Math.sin(sPhi) * Math.sin(sAngle) * sR;
+      this.galaxyScatteredStart[i3 + 2] = Math.cos(sPhi) * sR;
+
+      positions[i3] = this.galaxyScatteredStart[i3];
+      positions[i3 + 1] = this.galaxyScatteredStart[i3 + 1];
+      positions[i3 + 2] = this.galaxyScatteredStart[i3 + 2];
+
+      this.galaxyRandomPhases[i] = Math.random() * Math.PI * 2;
+
+      // Exactly 15% pixel particles, 85% cosmic particles
+      isPixels[i] = Math.random() < 0.15 ? 1.0 : 0.0;
+
+      // Spiral arm colors: White remains plurality/max (~53%), 30% of white converted to colored starlight
+      const roll = Math.random();
+      let col;
+      if (roll > 0.47) {
+        col = Math.random() > 0.5 ? colCoreWhite : colStarWhite;
+      } else {
+        col = coloredPalette[Math.floor(Math.random() * coloredPalette.length)];
+      }
+
+      colors[i3] = col.r;
+      colors[i3 + 1] = col.g;
+      colors[i3 + 2] = col.b;
+
+      // Size variation: crisp pinpoint stars and soft background dust
+      const sizeRand = Math.random();
+      sizes[i] = sizeRand > 0.93 ? 0.075 + Math.random() * 0.045 : 0.028 + Math.random() * 0.038;
+    }
+
+    const galaxyGeo = new THREE.BufferGeometry();
+    galaxyGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    galaxyGeo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+    galaxyGeo.setAttribute("size", new THREE.BufferAttribute(sizes, 1));
+    galaxyGeo.setAttribute("isPixel", new THREE.BufferAttribute(isPixels, 1));
+
+    // Custom shader: renders 85% soft cosmic star particles and 15% crisp cyber pixels
+    this.galaxyMaterial = new THREE.ShaderMaterial({
       vertexShader: `
-        varying vec2 vUv;
-        varying vec3 vNormal;
-        varying vec3 vViewPosition;
+        attribute float size;
+        attribute float isPixel;
+        varying vec3 vColor;
+        varying float vDist;
+        varying float vIsPixel;
         void main() {
-          vUv = uv;
-          vNormal = normalize(normalMatrix * normal);
-          vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
-          vViewPosition = -mvPos.xyz;
-          gl_Position = projectionMatrix * mvPos;
+          vColor = color;
+          vIsPixel = isPixel;
+          vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+          vDist = length(position.xy);
+          gl_Position = projectionMatrix * mvPosition;
+          gl_PointSize = max(size * (560.0 / -mvPosition.z), 1.0);
         }
       `,
       fragmentShader: `
-        uniform sampler2D uTexture;
         uniform float uOpacity;
-        uniform float uBlink;
-        uniform float uTime;
-        varying vec2 vUv;
-        varying vec3 vNormal;
-        varying vec3 vViewPosition;
-
+        varying vec3 vColor;
+        varying float vDist;
+        varying float vIsPixel;
         void main() {
-          // Seamless edge fade into black background (#030509)
-          float edgeX = smoothstep(0.0, 0.06, vUv.x) * smoothstep(1.0, 0.94, vUv.x);
-          float edgeY = smoothstep(0.0, 0.06, vUv.y) * smoothstep(1.0, 0.94, vUv.y);
-          float edgeAlpha = edgeX * edgeY;
+          vec2 coord = gl_PointCoord - vec2(0.5);
 
-          vec4 texColor = texture2D(uTexture, vUv);
-
-          // Subtle fiber shimmer on luminous tips
-          float luma = dot(texColor.rgb, vec3(0.299, 0.587, 0.114));
-          float sparkle = sin(uTime * 3.0 + vUv.x * 25.0 + vUv.y * 25.0) * 0.06 * step(0.6, luma);
-          vec3 col = texColor.rgb + sparkle * vec3(0.45, 0.90, 1.0);
-
-          // Eyelid blink occlusion (anatomical almond curve centered at pupil: 0.485, 0.482)
-          float dx = clamp(abs(vUv.x - 0.485) / 0.18, 0.0, 1.0);
-          float curveFactor = pow(max(0.0, 1.0 - dx * dx), 0.7);
-          float maxHalfOpening = 0.065 * curveFactor;
-          float dy = abs(vUv.y - 0.482);
-
-          float currentHalfOpening = maxHalfOpening * (1.0 - uBlink);
-          float lidOcclusion = smoothstep(currentHalfOpening - 0.012, currentHalfOpening + 0.012, dy) * uBlink;
-
-          vec3 eyelidTone = vec3(0.012, 0.02, 0.036);
-          col = mix(col, eyelidTone, clamp(lidOcclusion * 1.5, 0.0, 1.0));
-
-          // Glowing optic seam pulse when blink reaches full closure
-          float seamGlow = smoothstep(0.015, 0.0, dy) * smoothstep(0.7, 1.0, uBlink) * curveFactor;
-          vec3 seamColor = mix(vec3(0.45, 0.9, 1.0), vec3(0.9, 0.4, 1.0), sin(vUv.x * 12.0) * 0.5 + 0.5);
-          col += seamGlow * seamColor * 2.2;
-
-          gl_FragColor = vec4(col, texColor.a * edgeAlpha * uOpacity);
+          if (vIsPixel > 0.5) {
+            // 15% Sharp cyber pixel particles (crisp square starlight pixels)
+            float maxDist = max(abs(coord.x), abs(coord.y));
+            if (maxDist > 0.44) discard;
+            float pixelAlpha = smoothstep(0.44, 0.36, maxDist) * uOpacity;
+            gl_FragColor = vec4(vColor * 1.25, pixelAlpha * 0.95);
+          } else {
+            // 85% Cosmic star particles (crisp pinpoint starlight with subtle clean halo)
+            float dist = length(coord);
+            if (dist > 0.5) discard;
+            float core = smoothstep(0.18, 0.0, dist);
+            float halo = smoothstep(0.5, 0.0, dist) * 0.35;
+            float alpha = (core + halo) * uOpacity;
+            vec3 finalColor = vColor + vec3(core * 0.3);
+            gl_FragColor = vec4(finalColor, alpha);
+          }
         }
       `,
       transparent: true,
       depthWrite: false,
-      side: THREE.DoubleSide,
-    });
-
-    this.eyeMesh = new THREE.Mesh(eyeGeo, this.eyeShaderMat);
-    this.eyeMesh.position.set(0, 0, 0);
-    this.eyeContainer.add(this.eyeMesh);
-
-    // B. FLOATING 3D COSMIC STARDUST & FIBER-OPTIC BOKEH PARTICLES
-    const bokehCount = 550;
-    const bokehGeo = new THREE.BufferGeometry();
-    const bokehPos = new Float32Array(bokehCount * 3);
-    const bokehColors = new Float32Array(bokehCount * 3);
-    this.bokehBaseData = [];
-
-    const colCyan = new THREE.Color(0x74e7ff);
-    const colViolet = new THREE.Color(0xd050ff);
-    const colGold = new THREE.Color(0xffbe76);
-    const colWhite = new THREE.Color(0xffffff);
-
-    for (let i = 0; i < bokehCount; i++) {
-      const bx = (Math.random() - 0.5) * 14.0;
-      const by = (Math.random() - 0.5) * 8.0;
-      const bz = 0.15 + Math.random() * 1.6;
-
-      bokehPos[i * 3] = bx;
-      bokehPos[i * 3 + 1] = by;
-      bokehPos[i * 3 + 2] = bz;
-
-      const r = Math.random();
-      let c;
-      if (r > 0.65) c = colCyan;
-      else if (r > 0.35) c = colViolet;
-      else if (r > 0.15) c = colGold;
-      else c = colWhite;
-
-      bokehColors[i * 3] = c.r;
-      bokehColors[i * 3 + 1] = c.g;
-      bokehColors[i * 3 + 2] = c.b;
-
-      this.bokehBaseData.push({
-        x: bx,
-        y: by,
-        z: bz,
-        speed: 0.2 + Math.random() * 0.5,
-        phase: Math.random() * Math.PI * 2,
-      });
-    }
-
-    bokehGeo.setAttribute("position", new THREE.BufferAttribute(bokehPos, 3));
-    bokehGeo.setAttribute("color", new THREE.BufferAttribute(bokehColors, 3));
-
-    this.bokehMat = new THREE.PointsMaterial({
-      size: 0.05,
       vertexColors: true,
-      transparent: true,
-      opacity: 0.0,
       blending: THREE.AdditiveBlending,
-      depthWrite: false,
+      uniforms: {
+        uOpacity: { value: 0.0 },
+      },
     });
 
-    this.bokehPoints = new THREE.Points(bokehGeo, this.bokehMat);
-    this.eyeContainer.add(this.bokehPoints);
+    this.galaxyPoints = new THREE.Points(galaxyGeo, this.galaxyMaterial);
+    this.galaxyGroup.add(this.galaxyPoints);
+
+    // Initial horizontal 3D perspective orientation (matching Screenshot 2)
+    this.galaxyGroup.rotation.x = this.galaxyTiltX;
+    this.galaxyGroup.rotation.y = 0.0;
+    this.galaxyGroup.rotation.z = 0.0;
+    this.galaxyPoints.rotation.z = this.galaxySpinAngle;
   }
 
   // =========================================================================
@@ -802,10 +865,8 @@ export class InternetGlobeScene {
     const el = this.canvas;
 
     el.addEventListener("mousedown", (e) => {
-      if (this.globeRevealed) {
-        this.isDragging = true;
-        this.previousMousePosition = { x: e.clientX, y: e.clientY };
-      }
+      this.isDragging = true;
+      this.previousMousePosition = { x: e.clientX, y: e.clientY };
     });
 
     window.addEventListener("mouseup", () => {
@@ -831,6 +892,19 @@ export class InternetGlobeScene {
           this.previousMousePosition = { x: clientX, y: clientY };
         }
         this.checkRaycasterIntersections(clientX, clientY);
+      } else {
+        // Galaxy interaction: 720-degree spin on itself & tilt
+        if (this.isDragging) {
+          const deltaX = clientX - this.previousMousePosition.x;
+          const deltaY = clientY - this.previousMousePosition.y;
+          this.galaxySpinVelocity = deltaX * 0.0035;
+          this.galaxyTiltVelocity = deltaY * 0.0035;
+          this.galaxySpinAngle += this.galaxySpinVelocity;
+          this.galaxyTiltX += this.galaxyTiltVelocity;
+          this.previousMousePosition = { x: clientX, y: clientY };
+        }
+        // Track pointer for real-time particle disturbance & reshape
+        this.updateGalaxyPointer();
       }
     });
 
@@ -838,7 +912,7 @@ export class InternetGlobeScene {
     el.addEventListener(
       "touchstart",
       (e) => {
-        if (this.globeRevealed && e.touches.length === 1) {
+        if (e.touches.length === 1) {
           this.isDragging = true;
           this.previousMousePosition = {
             x: e.touches[0].clientX,
@@ -856,23 +930,58 @@ export class InternetGlobeScene {
     window.addEventListener(
       "touchmove",
       (e) => {
-        if (this.isDragging && this.globeRevealed && e.touches.length === 1) {
-          const deltaX = e.touches[0].clientX - this.previousMousePosition.x;
-          const deltaY = e.touches[0].clientY - this.previousMousePosition.y;
-          this.rotationVelocity.y = deltaX * 0.003;
-          this.rotationVelocity.x = deltaY * 0.003;
-          this.globeRotation.y += this.rotationVelocity.y;
-          this.globeRotation.x += this.rotationVelocity.x;
-          this.previousMousePosition = {
-            x: e.touches[0].clientX,
-            y: e.touches[0].clientY,
-          };
+        if (e.touches.length === 1) {
+          const rect = el.getBoundingClientRect();
+          this.targetMouse.set(
+            ((e.touches[0].clientX - rect.left) / rect.width) * 2 - 1,
+            -((e.touches[0].clientY - rect.top) / rect.height) * 2 + 1,
+          );
+          const clientX = e.touches[0].clientX;
+          const clientY = e.touches[0].clientY;
+
+          if (this.globeRevealed) {
+            if (this.isDragging) {
+              const deltaX = clientX - this.previousMousePosition.x;
+              const deltaY = clientY - this.previousMousePosition.y;
+              this.rotationVelocity.y = deltaX * 0.003;
+              this.rotationVelocity.x = deltaY * 0.003;
+              this.globeRotation.y += this.rotationVelocity.y;
+              this.globeRotation.x += this.rotationVelocity.x;
+              this.previousMousePosition = { x: clientX, y: clientY };
+            }
+          } else {
+            if (this.isDragging) {
+              const deltaX = clientX - this.previousMousePosition.x;
+              const deltaY = clientY - this.previousMousePosition.y;
+              this.galaxySpinVelocity = deltaX * 0.0035;
+              this.galaxyTiltVelocity = deltaY * 0.0035;
+              this.galaxySpinAngle += this.galaxySpinVelocity;
+              this.galaxyTiltX += this.galaxyTiltVelocity;
+              this.previousMousePosition = { x: clientX, y: clientY };
+            }
+            this.updateGalaxyPointer();
+          }
         }
       },
       { passive: true },
     );
 
     window.addEventListener("resize", () => this.onResize());
+  }
+
+  updateGalaxyPointer() {
+    if (!this.galaxyGroup || !this.camera) return;
+    this.raycaster.setFromCamera(this.mouse2D, this.camera);
+    const planeNormal = new THREE.Vector3(0, 0, 1).applyQuaternion(this.camera.quaternion);
+    const plane = new THREE.Plane().setFromNormalAndCoplanarPoint(planeNormal, this.galaxyGroup.position);
+    const hitWorld = new THREE.Vector3();
+    if (this.raycaster.ray.intersectPlane(plane, hitWorld)) {
+      this.galaxyGroup.worldToLocal(hitWorld);
+      this.galaxyPointerLocal.copy(hitWorld);
+      this.galaxyPointerActive = true;
+    } else {
+      this.galaxyPointerActive = false;
+    }
   }
 
   checkRaycasterIntersections(clientX, clientY) {
@@ -963,7 +1072,7 @@ export class InternetGlobeScene {
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);
-    if (this.sequenceTime >= 16.5) {
+    if (this.sequenceTime >= 13.2) {
       this.globeGroup.position.x = window.innerWidth > 960 ? 1.6 : 0.0;
     }
   }
@@ -975,8 +1084,22 @@ export class InternetGlobeScene {
     this.globeGroup.visible = false;
     this.globeGroup.scale.set(0.01, 0.01, 0.01);
     this.globeGroup.position.set(0, 0, 0);
-    this.eyeSceneGroup.visible = true;
-    this.camera.position.set(0, 0, 13);
+    this.galaxyGroup.visible = true;
+    this.galaxyGroup.scale.set(1, 1, 1);
+    this.galaxyTiltX = 1.20;
+    this.galaxySpinAngle = 0.0;
+    this.galaxySpinVelocity = 0.0;
+    this.galaxyTiltVelocity = 0.0;
+    this.camera.position.set(0, 0, 4);
+
+    if (this.galaxyPoints && this.galaxyScatteredStart) {
+      const pos = this.galaxyPoints.geometry.attributes.position.array;
+      for (let i = 0; i < this.galaxyParticleCount * 3; i++) {
+        pos[i] = this.galaxyScatteredStart[i];
+        if (this.galaxyVelocities) this.galaxyVelocities[i] = 0;
+      }
+      this.galaxyPoints.geometry.attributes.position.needsUpdate = true;
+    }
   }
 
   // =========================================================================
@@ -992,31 +1115,28 @@ export class InternetGlobeScene {
 
     // =======================================================================
     // DETERMINISTIC TIMELINE STATE MACHINE
-    // 0.0s – 1.0s   COSMIC_SPACE       Faint cosmic field & particle acceleration
-    // 1.0s – 10.0s  EYE_OBSERVING      Authentic biometric eye, forward observation
-    // 10.0s – 12.0s BLINK_CYCLE        Aperture blink cycle (pupil occluded, then reopened)
-    // 12.0s – 14.8s PUPIL_ZOOM         Camera enters circular pupil portal
-    // 14.8s+        GLOBE_ACTIVE       Protected BGP globe rotation & telemetry
+    // 0.0s – 1.8s   GALAXY_COLLAPSE    Particles rush from deep space to center (Image 2)
+    // 1.8s – 3.6s   GALAXY_UNFURLING   Particles blossom into logarithmic spiral (Image 3)
+    // 3.6s – 10.5s  GALAXY_INTERACTIVE 720° rotation & hover disturbance/reshaping
+    // 10.5s – 12.5s GALAXY_ZOOM_OUT    Accelerating cosmic zoom-out
+    // 12.5s+        GLOBE_ACTIVE       Protected BGP globe rotation & telemetry
     // =======================================================================
 
-    let state = "COSMIC_SPACE";
-    let statusLabel = "[QUANTUM OBSERVER // COSMIC PARTICLES ACCELERATING]";
+    let state = "GALAXY_COLLAPSE";
+    let statusLabel = "[DEEP SPACE TELEMETRY // INWARD CONVERGENCE STREAM]";
 
-    if (t >= 14.8) {
+    if (t >= 12.5) {
       state = "GLOBE_ACTIVE";
       statusLabel = "[BGP TELEMETRY ACTIVE // 18 AS NODES // 720° ROTATION]";
-    } else if (t >= 12.0) {
-      state = "PUPIL_ZOOM";
-      statusLabel = "[TRANSITION // ENTERING CIRCULAR PUPIL PORTAL]";
-    } else if (t >= 11.0) {
-      state = "BLINK_OPENING";
-      statusLabel = "[APERTURE CYCLE // EYELIDS REOPENING]";
-    } else if (t >= 10.0) {
-      state = "BLINK_CLOSING";
-      statusLabel = "[APERTURE CYCLE // SYNCHRONIZED BLINK]";
-    } else if (t >= 1.0) {
-      state = "EYE_OBSERVING";
-      statusLabel = "[BIOMETRIC SYSTEM ONLINE // FORWARD OBSERVATION]";
+    } else if (t >= 10.5) {
+      state = "GALAXY_ZOOM_OUT";
+      statusLabel = "[TRANSITION // COSMIC ZOOM-OUT SEQUENCE]";
+    } else if (t >= 3.6) {
+      state = "GALAXY_INTERACTIVE";
+      statusLabel = "[SPIRAL GALAXY ONLINE // 16K STELLAR PARTICLES // 720° ROTATION]";
+    } else if (t >= 1.8) {
+      state = "GALAXY_UNFURLING";
+      statusLabel = "[SPIRAL FORMATION // LOGARITHMIC ARMS BLOOMING]";
     }
 
     if (this.currentState !== state) {
@@ -1027,97 +1147,190 @@ export class InternetGlobeScene {
     }
 
     // -----------------------------------------------------------------------
-    // A. EYE FORMATION, BLINK & PUPIL ZOOM (t < 14.8s)
+    // A. GALAXY LIFECYCLE, 720° ROTATION & HOVER DISTURBANCE (t < 12.5s)
     // -----------------------------------------------------------------------
-    if (t < 14.8) {
-      this.eyeSceneGroup.visible = true;
+    if (t < 12.5) {
+      this.galaxyGroup.visible = true;
       this.globeGroup.visible = false;
 
-      // 1. Smooth fade-in of the eye & bokeh (1.0s to 3.0s)
-      const eyeFade = t < 1.0 ? 0.0 : Math.min((t - 1.0) / 2.0, 1.0);
-      if (this.eyeShaderMat) {
-        this.eyeShaderMat.uniforms.uOpacity.value = eyeFade;
-        this.eyeShaderMat.uniforms.uTime.value = t;
+      const posAttr = this.galaxyPoints.geometry.attributes.position;
+      const posArray = posAttr.array;
+
+      // Continuous rotation on itself around its central axis & momentum inertia
+      if (!this.isDragging) {
+        this.galaxySpinVelocity *= 0.95;
+        this.galaxyTiltVelocity *= 0.95;
+        this.galaxySpinAngle += this.galaxySpinVelocity + 0.0016;
+        this.galaxyTiltX += this.galaxyTiltVelocity;
       }
-      if (this.bokehMat) {
-        this.bokehMat.opacity = eyeFade * 0.85;
-      }
-      // Animate floating bokeh particles
-      if (this.bokehPoints && this.bokehBaseData) {
-        const posAttr = this.bokehPoints.geometry.attributes.position;
-        for (let i = 0; i < this.bokehBaseData.length; i++) {
-          const b = this.bokehBaseData[i];
-          const curY = b.y + Math.sin(t * b.speed + b.phase) * 0.12;
-          const curX = b.x + Math.cos(t * b.speed * 0.7 + b.phase) * 0.08;
-          posAttr.setXY(i, curX, curY);
+      this.galaxyGroup.rotation.x = this.galaxyTiltX;
+      this.galaxyGroup.rotation.y = 0.0;
+      this.galaxyGroup.rotation.z = 0.0;
+      this.galaxyPoints.rotation.z = this.galaxySpinAngle;
+
+      // --- Stage 1: Particles rushing inward to center (0.0s – 1.8s) ---
+      if (t < 1.8) {
+        const pIn = t / 1.8;
+        const easeIn = pIn * pIn * (3.0 - 2.0 * pIn);
+        const vortexSpin = (1.0 - easeIn) * 3.5;
+
+        for (let i = 0; i < this.galaxyParticleCount; i++) {
+          const i3 = i * 3;
+          const sx = this.galaxyScatteredStart[i3];
+          const sy = this.galaxyScatteredStart[i3 + 1];
+          const sz = this.galaxyScatteredStart[i3 + 2];
+
+          const tx = this.galaxySpiralTargets[i3] * 0.14;
+          const ty = this.galaxySpiralTargets[i3 + 1] * 0.14;
+          const tz = this.galaxySpiralTargets[i3 + 2] * 0.14;
+
+          // Inward pull with vortex rotation
+          const curX = sx * (1.0 - easeIn) + tx * easeIn;
+          const curY = sy * (1.0 - easeIn) + ty * easeIn;
+          const curZ = sz * (1.0 - easeIn) + tz * easeIn;
+
+          const cosS = Math.cos(vortexSpin);
+          const sinS = Math.sin(vortexSpin);
+          posArray[i3] = curX * cosS - curY * sinS;
+          posArray[i3 + 1] = curX * sinS + curY * cosS;
+          posArray[i3 + 2] = curZ;
+
+          this.galaxyVelocities[i3] = 0;
+          this.galaxyVelocities[i3 + 1] = 0;
+          this.galaxyVelocities[i3 + 2] = 0;
         }
         posAttr.needsUpdate = true;
+
+        this.galaxyMaterial.uniforms.uOpacity.value = Math.min(t / 0.8, 1.0);
+        this.camera.position.z = 4.2 + t * 1.2;
       }
+      // --- Stage 2: Blossoming / unfurling outward into spiral arms (1.8s – 3.6s) ---
+      else if (t < 3.6) {
+        const pOut = (t - 1.8) / 1.8;
+        const easeOut = 1.0 - Math.pow(1.0 - pOut, 3.0);
 
-      // 2. Subtle mouse parallax for the eye (forward biometric lock)
-      const cursorParallaxX = this.smoothedMouse.x * 0.14;
-      const cursorParallaxY = this.smoothedMouse.y * 0.09;
-      this.eyeContainer.position.x +=
-        (cursorParallaxX - this.eyeContainer.position.x) * 0.08;
-      this.eyeContainer.position.y +=
-        (cursorParallaxY - this.eyeContainer.position.y) * 0.08;
-      this.eyeContainer.rotation.y +=
-        (cursorParallaxX * 0.22 - this.eyeContainer.rotation.y) * 0.08;
-      this.eyeContainer.rotation.x +=
-        (-cursorParallaxY * 0.18 - this.eyeContainer.rotation.x) * 0.08;
+        for (let i = 0; i < this.galaxyParticleCount; i++) {
+          const i3 = i * 3;
+          const tx = this.galaxySpiralTargets[i3];
+          const ty = this.galaxySpiralTargets[i3 + 1];
+          const tz = this.galaxySpiralTargets[i3 + 2];
 
-      // 3. The Single Cosmic Blink (10.0s - 12.0s)
-      let blinkVal = 0.0;
-      if (t >= 10.0 && t < 12.0) {
-        if (t < 10.85) {
-          // Closing
-          blinkVal = Math.min((t - 10.0) / 0.85, 1.0);
-        } else if (t < 11.15) {
-          // Fully shut
-          blinkVal = 1.0;
+          // Expand smoothly from nucleus into full spiral coordinates
+          const coreX = tx * 0.14;
+          const coreY = ty * 0.14;
+          const coreZ = tz * 0.14;
+
+          const targetX = coreX * (1.0 - easeOut) + tx * easeOut;
+          const targetY = coreY * (1.0 - easeOut) + ty * easeOut;
+          const targetZ = coreZ * (1.0 - easeOut) + tz * easeOut;
+
+          posArray[i3] += (targetX - posArray[i3]) * 0.18;
+          posArray[i3 + 1] += (targetY - posArray[i3 + 1]) * 0.18;
+          posArray[i3 + 2] += (targetZ - posArray[i3 + 2]) * 0.18;
+        }
+        posAttr.needsUpdate = true;
+
+        this.galaxyMaterial.uniforms.uOpacity.value = 1.0;
+        this.camera.position.z = 6.36 + pOut * 3.0; // 6.36 -> 9.36
+      }
+      // --- Stage 3: Stable interactive galaxy (3.6s – 10.5s) ---
+      else if (t < 10.5) {
+        const hasHover = this.galaxyPointerActive;
+        const px = this.galaxyPointerLocal.x;
+        const py = this.galaxyPointerLocal.y;
+        const pz = this.galaxyPointerLocal.z;
+        const hoverRadius = 1.9;
+        const hoverRadiusSq = hoverRadius * hoverRadius;
+
+        for (let i = 0; i < this.galaxyParticleCount; i++) {
+          const i3 = i * 3;
+          const tx = this.galaxySpiralTargets[i3];
+          const ty = this.galaxySpiralTargets[i3 + 1];
+          const tz = this.galaxySpiralTargets[i3 + 2];
+
+          // 1. Mouse hover proximity disturbance (reduced by 30% for gentle, fluid response)
+          if (hasHover) {
+            const dx = posArray[i3] - px;
+            const dy = posArray[i3 + 1] - py;
+            const dz = posArray[i3 + 2] - pz;
+            const distSq = dx * dx + dy * dy + dz * dz;
+
+            if (distSq < hoverRadiusSq) {
+              const dist = Math.sqrt(distSq);
+              const factor = 1.0 - dist / hoverRadius;
+              const force = factor * factor * 0.315; // 30% reduction from 0.45
+              // Fluid radial repulsion + vortex swirl wake
+              this.galaxyVelocities[i3] += (dx / (dist + 0.001)) * force - dy * force * 0.266;
+              this.galaxyVelocities[i3 + 1] += (dy / (dist + 0.001)) * force + dx * force * 0.266;
+              this.galaxyVelocities[i3 + 2] += (dz / (dist + 0.001)) * force * 0.175;
+            }
+          }
+
+          // 2. Spring-damper restoring force back to equilibrium spiral arms ("and reshape..")
+          const rx = tx - posArray[i3];
+          const ry = ty - posArray[i3 + 1];
+          const rz = tz - posArray[i3 + 2];
+
+          this.galaxyVelocities[i3] = (this.galaxyVelocities[i3] + rx * 0.08) * 0.88;
+          this.galaxyVelocities[i3 + 1] = (this.galaxyVelocities[i3 + 1] + ry * 0.08) * 0.88;
+          this.galaxyVelocities[i3 + 2] = (this.galaxyVelocities[i3 + 2] + rz * 0.08) * 0.88;
+
+          // Subtle astronomical twinkle
+          const phase = this.galaxyRandomPhases[i];
+          const shimmer = Math.sin(t * 1.8 + phase) * 0.012;
+
+          posArray[i3] += this.galaxyVelocities[i3] + shimmer;
+          posArray[i3 + 1] += this.galaxyVelocities[i3 + 1] + shimmer;
+          posArray[i3 + 2] += this.galaxyVelocities[i3 + 2];
+        }
+        posAttr.needsUpdate = true;
+
+        this.galaxyMaterial.uniforms.uOpacity.value = 1.0;
+        // Camera slow steady cinematic pullback
+        const pullProg = (t - 3.6) / 6.9;
+        this.camera.position.z = 9.36 + pullProg * 2.8; // 9.36 -> 12.16
+      }
+      // --- Stage 4: Accelerating zoom into center / moving towards us (10.5s – 12.5s) ---
+      else {
+        const zoomProg = (t - 10.5) / 2.0;
+        const easeIn = Math.pow(zoomProg, 2.2);
+
+        // Camera dollys forward into the center (12.16 down to 1.2)
+        this.camera.position.z = Math.max(12.16 - easeIn * 10.96, 1.2);
+
+        // Galaxy moves towards us / expands outward
+        const expandScale = 1.0 + easeIn * 1.8;
+        this.galaxyGroup.scale.set(expandScale, expandScale, expandScale);
+
+        // Smooth fade out as camera penetrates center core
+        if (zoomProg > 0.65) {
+          const fadeOut = 1.0 - (zoomProg - 0.65) / 0.35;
+          this.galaxyMaterial.uniforms.uOpacity.value = Math.max(0.0, fadeOut);
         } else {
-          // Reopening
-          blinkVal = 1.0 - Math.min((t - 11.15) / 0.85, 1.0);
+          this.galaxyMaterial.uniforms.uOpacity.value = 1.0;
         }
       }
-      if (this.eyeShaderMat) {
-        this.eyeShaderMat.uniforms.uBlink.value = blinkVal;
-      }
 
-      // 4. Zoom Into Circular Pupil (12.0s - 14.8s)
-      if (t >= 12.0) {
-        const zoomProg = (t - 12.0) / 2.8; // 0 to 1
-        // Camera dollys straight into the pitch black pupil center at (0, 0)
-        const camZ = 13.0 - Math.pow(zoomProg, 2.2) * 11.8; // 13.0 down to 1.2
-        this.camera.position.z = Math.max(camZ, 1.2);
-        this.camera.position.x = 0;
-        this.camera.position.y = 0;
-
-        if (zoomProg > 0.7 && this.eyeShaderMat) {
-          const fadeOut = 1.0 - (zoomProg - 0.7) / 0.3;
-          this.eyeShaderMat.uniforms.uOpacity.value = Math.max(0.0, fadeOut);
-        }
-      } else {
-        this.camera.position.set(0, 0, 13);
-      }
+      this.camera.position.x = 0;
+      this.camera.position.y = 0;
     }
 
     // -----------------------------------------------------------------------
-    // B. SEAMLESS HAND-OFF TO THE EXISTING BGP GLOBE (t >= 14.8s)
+    // B. SEAMLESS HAND-OFF TO THE EXISTING BGP GLOBE (t >= 12.5s)
     // -----------------------------------------------------------------------
-    if (t >= 14.8) {
-      this.eyeSceneGroup.visible = false;
+    if (t >= 12.5) {
+      this.galaxyGroup.visible = false;
       this.globeGroup.visible = true;
       this.globeRevealed = true;
 
-      // Emergence transition (14.8s to 16.5s)
+      // Emergence transition (12.5s to 14.2s)
       const targetGlobeX = window.innerWidth > 960 ? 1.6 : 0.0;
 
-      if (t < 16.5) {
-        const emerge = (t - 14.8) / 1.7; // 0 to 1
+      if (t < 14.2) {
+        const emerge = (t - 12.5) / 1.7; // 0 to 1
         // Smoothly zoom camera back out to globe view
         this.camera.position.z = 1.2 + Math.pow(emerge, 0.5) * 13.8; // 1.2 up to 15.0
-        // Scale globe smoothly out of the pupil center
+        // Scale globe smoothly out of the center
         const s = Math.min(Math.pow(emerge, 0.7), 1.0);
         this.globeGroup.scale.set(s, s, s);
         // Smoothly glide position to the right
