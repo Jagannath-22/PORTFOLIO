@@ -1,14 +1,14 @@
-import * as THREE from 'three';
-import { isPointOnLand, latLonToXYZ } from '../utils/geoUtils.js';
+import * as THREE from "three";
+import { isPointOnLand, latLonToXYZ } from "../utils/geoUtils.js";
 
 /**
  * InternetGlobeScene — Master Cinematic Cybersecurity Scene.
- * 
+ *
  * SEQUENCE:
  * COSMIC PARTICLES → FIBER-OPTIC EYE → GAZE LEFT → GAZE RIGHT → GAZE CENTER
  * → ONE BLINK (PUPIL 100% COVERED) → OPEN → ZOOM INTO CIRCULAR PUPIL
  * → SEAMLESS TRANSITION TO EXISTING BGP GLOBE → INTERACTIVE GLOBE & BGP TELEMETRY
- * 
+ *
  * RULES:
  * - The opening eye sequence is 100% autonomous inside the 100vh viewport.
  * - Zero automatic scrolling.
@@ -22,20 +22,25 @@ export class InternetGlobeScene {
 
     // Timeline state
     this.sequenceTime = 0;
-    this.currentState = 'COSMIC_SPACE';
+    this.currentState = "COSMIC_SPACE";
     this.globeRevealed = false;
     this.scrollProgress = 0;
 
     // Three.js Core
     this.scene = new THREE.Scene();
-    this.camera = new THREE.PerspectiveCamera(38, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+    this.camera = new THREE.PerspectiveCamera(
+      38,
+      canvas.clientWidth / canvas.clientHeight,
+      0.1,
+      1000,
+    );
     this.camera.position.set(0, 0, 13);
 
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
       antialias: true,
       alpha: true,
-      powerPreference: 'high-performance'
+      powerPreference: "high-performance",
     });
     this.renderer.setSize(canvas.clientWidth, canvas.clientHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -46,7 +51,6 @@ export class InternetGlobeScene {
     this.mouse2D = new THREE.Vector2(-999, -999);
     this.targetMouse = new THREE.Vector2(0, 0);
     this.smoothedMouse = new THREE.Vector2(0, 0);
-
 
     // Globe interaction & inertia
     this.isDragging = false;
@@ -104,7 +108,7 @@ export class InternetGlobeScene {
       positions[i * 3 + 2] = (Math.random() - 0.5) * 20 - 4;
 
       const r = Math.random();
-      const c = r > 0.6 ? colWhite : (r > 0.25 ? colCyan : colAmber);
+      const c = r > 0.6 ? colWhite : r > 0.25 ? colCyan : colAmber;
       colors[i * 3] = c.r;
       colors[i * 3 + 1] = c.g;
       colors[i * 3 + 2] = c.b;
@@ -113,15 +117,15 @@ export class InternetGlobeScene {
     }
 
     const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+    geo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
 
     const mat = new THREE.PointsMaterial({
       size: 0.05,
       vertexColors: true,
       transparent: true,
       opacity: 0.75,
-      blending: THREE.AdditiveBlending
+      blending: THREE.AdditiveBlending,
     });
 
     this.cosmicPoints = new THREE.Points(geo, mat);
@@ -142,7 +146,7 @@ export class InternetGlobeScene {
 
     // Load the user's authentic cosmic fiber-optic eye texture with 4K anisotropic filtering
     const textureLoader = new THREE.TextureLoader();
-    this.eyeTexture = textureLoader.load('/textures/cosmic-eye.jpg');
+    this.eyeTexture = textureLoader.load("/textures/cosmic-eye.jpg");
     const maxAniso = this.renderer.capabilities.getMaxAnisotropy();
     this.eyeTexture.anisotropy = maxAniso;
     this.eyeTexture.generateMipmaps = true;
@@ -174,8 +178,8 @@ export class InternetGlobeScene {
       uniforms: {
         uTexture: { value: this.eyeTexture },
         uOpacity: { value: 0.0 },
-        uBlink: { value: 0.0 },        // 0.0 = open, 1.0 = fully closed
-        uTime: { value: 0.0 }
+        uBlink: { value: 0.0 }, // 0.0 = open, 1.0 = fully closed
+        uTime: { value: 0.0 },
       },
       vertexShader: `
         varying vec2 vUv;
@@ -233,7 +237,7 @@ export class InternetGlobeScene {
       `,
       transparent: true,
       depthWrite: false,
-      side: THREE.DoubleSide
+      side: THREE.DoubleSide,
     });
 
     this.eyeMesh = new THREE.Mesh(eyeGeo, this.eyeShaderMat);
@@ -277,12 +281,12 @@ export class InternetGlobeScene {
         y: by,
         z: bz,
         speed: 0.2 + Math.random() * 0.5,
-        phase: Math.random() * Math.PI * 2
+        phase: Math.random() * Math.PI * 2,
       });
     }
 
-    bokehGeo.setAttribute('position', new THREE.BufferAttribute(bokehPos, 3));
-    bokehGeo.setAttribute('color', new THREE.BufferAttribute(bokehColors, 3));
+    bokehGeo.setAttribute("position", new THREE.BufferAttribute(bokehPos, 3));
+    bokehGeo.setAttribute("color", new THREE.BufferAttribute(bokehColors, 3));
 
     this.bokehMat = new THREE.PointsMaterial({
       size: 0.05,
@@ -290,7 +294,7 @@ export class InternetGlobeScene {
       transparent: true,
       opacity: 0.0,
       blending: THREE.AdditiveBlending,
-      depthWrite: false
+      depthWrite: false,
     });
 
     this.bokehPoints = new THREE.Points(bokehGeo, this.bokehMat);
@@ -337,7 +341,7 @@ export class InternetGlobeScene {
         ? this.globeRadius + (Math.random() - 0.5) * 0.02
         : this.globeRadius;
 
-      const gx = r * Math.sin(phi) * Math.cos(theta);
+      const gx = -r * Math.sin(phi) * Math.cos(theta);
       const gy = r * Math.cos(phi);
       const gz = r * Math.sin(phi) * Math.sin(theta);
 
@@ -367,9 +371,18 @@ export class InternetGlobeScene {
     const actualCount = idx;
 
     const globeGeo = new THREE.BufferGeometry();
-    globeGeo.setAttribute('position', new THREE.BufferAttribute(positions.subarray(0, actualCount * 3), 3));
-    globeGeo.setAttribute('color', new THREE.BufferAttribute(colors.subarray(0, actualCount * 3), 3));
-    globeGeo.setAttribute('size', new THREE.BufferAttribute(sizes.subarray(0, actualCount), 1));
+    globeGeo.setAttribute(
+      "position",
+      new THREE.BufferAttribute(positions.subarray(0, actualCount * 3), 3),
+    );
+    globeGeo.setAttribute(
+      "color",
+      new THREE.BufferAttribute(colors.subarray(0, actualCount * 3), 3),
+    );
+    globeGeo.setAttribute(
+      "size",
+      new THREE.BufferAttribute(sizes.subarray(0, actualCount), 1),
+    );
 
     // Custom shader material for the globe
     const vertexShader = `
@@ -402,12 +415,12 @@ export class InternetGlobeScene {
       vertexShader,
       fragmentShader,
       uniforms: {
-        uOpacity: { value: 1.0 }
+        uOpacity: { value: 1.0 },
       },
       vertexColors: true,
       transparent: true,
       blending: THREE.AdditiveBlending,
-      depthWrite: false
+      depthWrite: false,
     });
 
     this.globePoints = new THREE.Points(globeGeo, this.globeMaterial);
@@ -419,7 +432,7 @@ export class InternetGlobeScene {
       color: 0x030509,
       transparent: true,
       opacity: 0.0,
-      visible: false
+      visible: false,
     });
     this.innerSphere = new THREE.Mesh(innerGeo, innerMat);
     this.innerSphere.visible = false;
@@ -430,7 +443,7 @@ export class InternetGlobeScene {
       color: 0x030509,
       transparent: true,
       opacity: 0.0,
-      visible: false
+      visible: false,
     });
     this.rimMesh = new THREE.Mesh(rimGeo, rimMat);
     this.rimMesh.visible = false;
@@ -446,35 +459,202 @@ export class InternetGlobeScene {
     this.globeGroup.add(this.nodesGroup);
 
     this.asNodes = [
-      { id: 'AS13335', name: 'Cloudflare Edge', city: 'San Francisco, US', lat: 37.77, lon: -122.42, prefix: '104.16.0.0/12', status: 'ANNOUNCED', rtt: '4.2ms' },
-      { id: 'AS15169', name: 'Google Global Cache', city: 'Mountain View, US', lat: 37.38, lon: -122.08, prefix: '8.8.8.0/24', status: 'ANNOUNCED', rtt: '2.8ms' },
-      { id: 'AS3356', name: 'Lumen Tier-1 Backbone', city: 'Denver, US', lat: 39.73, lon: -104.99, prefix: '4.0.0.0/8', status: 'ANNOUNCED', rtt: '11.4ms' },
-      { id: 'AS7922', name: 'Comcast National', city: 'Philadelphia, US', lat: 39.95, lon: -75.16, prefix: '73.0.0.0/8', status: 'ANNOUNCED', rtt: '14.2ms' },
-      { id: 'AS7018', name: 'AT&T Global Network', city: 'Dallas, US', lat: 32.77, lon: -96.79, prefix: '12.0.0.0/8', status: 'ANNOUNCED', rtt: '18.1ms' },
-      { id: 'AS20940', name: 'Akamai Edge Network', city: 'Cambridge, US', lat: 42.37, lon: -71.10, prefix: '23.0.0.0/12', status: 'ANNOUNCED', rtt: '6.5ms' },
-      { id: 'AS16509', name: 'Amazon AWS Backbone', city: 'Ashburn, US', lat: 39.04, lon: -77.48, prefix: '52.0.0.0/11', status: 'ANNOUNCED', rtt: '5.1ms' },
-      { id: 'AS9002', name: 'RETN EurAsia Backbone', city: 'London, UK', lat: 51.50, lon: -0.12, prefix: '87.245.224.0/19', status: 'ANNOUNCED', rtt: '22.3ms' },
-      { id: 'AS3257', name: 'GTT Communications', city: 'Frankfurt, DE', lat: 50.11, lon: 8.68, prefix: '89.149.0.0/16', status: 'ANNOUNCED', rtt: '24.7ms' },
-      { id: 'AS1299', name: 'Arelion (Telia Carrier)', city: 'Stockholm, SE', lat: 59.32, lon: 18.06, prefix: '213.155.128.0/18', status: 'ANNOUNCED', rtt: '28.0ms' },
-      { id: 'AS2914', name: 'NTT Communications', city: 'Tokyo, JP', lat: 35.68, lon: 139.69, prefix: '129.250.0.0/16', status: 'ANNOUNCED', rtt: '88.5ms' },
-      { id: 'AS9498', name: 'Bharti Airtel Core', city: 'Mumbai, IN', lat: 19.07, lon: 72.87, prefix: '125.16.0.0/14', status: 'ANNOUNCED', rtt: '42.1ms' },
-      { id: 'AS55836', name: 'Reliance Jio Infocomm', city: 'Delhi, IN', lat: 28.61, lon: 77.20, prefix: '49.44.0.0/14', status: 'ANNOUNCED', rtt: '45.3ms' },
-      { id: 'AS4637', name: 'Telstra Global Gateway', city: 'Sydney, AU', lat: -33.86, lon: 151.20, prefix: '139.130.0.0/16', status: 'ANNOUNCED', rtt: '112.0ms' },
-      { id: 'AS6762', name: 'Sparkle Seabone', city: 'Rome, IT', lat: 41.90, lon: 12.49, prefix: '195.223.0.0/16', status: 'ANNOUNCED', rtt: '31.4ms' },
-      { id: 'AS27699', name: 'Telecom Italia SP', city: 'São Paulo, BR', lat: -23.55, lon: -46.63, prefix: '177.16.0.0/12', status: 'ANNOUNCED', rtt: '135.0ms' },
-      { id: 'AS37100', name: 'SEACOM Subsea Cable', city: 'Johannesburg, ZA', lat: -26.20, lon: 28.04, prefix: '105.16.0.0/12', status: 'ANNOUNCED', rtt: '148.0ms' },
-      { id: 'AS4755', name: 'TATA Communications', city: 'Singapore, SG', lat: 1.35, lon: 103.81, prefix: '180.87.0.0/17', status: 'ANNOUNCED', rtt: '62.0ms' }
+      {
+        id: "AS13335",
+        name: "Cloudflare Edge",
+        city: "San Francisco, US",
+        lat: 37.77,
+        lon: -122.42,
+        prefix: "104.16.0.0/12",
+        status: "ANNOUNCED",
+        rtt: "4.2ms",
+      },
+      {
+        id: "AS15169",
+        name: "Google Global Cache",
+        city: "Mountain View, US",
+        lat: 37.38,
+        lon: -122.08,
+        prefix: "8.8.8.0/24",
+        status: "ANNOUNCED",
+        rtt: "2.8ms",
+      },
+      {
+        id: "AS3356",
+        name: "Lumen Tier-1 Backbone",
+        city: "Denver, US",
+        lat: 39.73,
+        lon: -104.99,
+        prefix: "4.0.0.0/8",
+        status: "ANNOUNCED",
+        rtt: "11.4ms",
+      },
+      {
+        id: "AS7922",
+        name: "Comcast National",
+        city: "Philadelphia, US",
+        lat: 39.95,
+        lon: -75.16,
+        prefix: "73.0.0.0/8",
+        status: "ANNOUNCED",
+        rtt: "14.2ms",
+      },
+      {
+        id: "AS7018",
+        name: "AT&T Global Network",
+        city: "Dallas, US",
+        lat: 32.77,
+        lon: -96.79,
+        prefix: "12.0.0.0/8",
+        status: "ANNOUNCED",
+        rtt: "18.1ms",
+      },
+      {
+        id: "AS20940",
+        name: "Akamai Edge Network",
+        city: "Cambridge, US",
+        lat: 42.37,
+        lon: -71.1,
+        prefix: "23.0.0.0/12",
+        status: "ANNOUNCED",
+        rtt: "6.5ms",
+      },
+      {
+        id: "AS16509",
+        name: "Amazon AWS Backbone",
+        city: "Ashburn, US",
+        lat: 39.04,
+        lon: -77.48,
+        prefix: "52.0.0.0/11",
+        status: "ANNOUNCED",
+        rtt: "5.1ms",
+      },
+      {
+        id: "AS9002",
+        name: "RETN EurAsia Backbone",
+        city: "London, UK",
+        lat: 51.5,
+        lon: -0.12,
+        prefix: "87.245.224.0/19",
+        status: "ANNOUNCED",
+        rtt: "22.3ms",
+      },
+      {
+        id: "AS3257",
+        name: "GTT Communications",
+        city: "Frankfurt, DE",
+        lat: 50.11,
+        lon: 8.68,
+        prefix: "89.149.0.0/16",
+        status: "ANNOUNCED",
+        rtt: "24.7ms",
+      },
+      {
+        id: "AS1299",
+        name: "Arelion (Telia Carrier)",
+        city: "Stockholm, SE",
+        lat: 59.32,
+        lon: 18.06,
+        prefix: "213.155.128.0/18",
+        status: "ANNOUNCED",
+        rtt: "28.0ms",
+      },
+      {
+        id: "AS2914",
+        name: "NTT Communications",
+        city: "Tokyo, JP",
+        lat: 35.68,
+        lon: 139.69,
+        prefix: "129.250.0.0/16",
+        status: "ANNOUNCED",
+        rtt: "88.5ms",
+      },
+      {
+        id: "AS9498",
+        name: "Bharti Airtel Core",
+        city: "Mumbai, IN",
+        lat: 19.07,
+        lon: 72.87,
+        prefix: "125.16.0.0/14",
+        status: "ANNOUNCED",
+        rtt: "42.1ms",
+      },
+      {
+        id: "AS55836",
+        name: "Reliance Jio Infocomm",
+        city: "Delhi, IN",
+        lat: 28.61,
+        lon: 77.2,
+        prefix: "49.44.0.0/14",
+        status: "ANNOUNCED",
+        rtt: "45.3ms",
+      },
+      {
+        id: "AS4637",
+        name: "Telstra Global Gateway",
+        city: "Sydney, AU",
+        lat: -33.86,
+        lon: 151.2,
+        prefix: "139.130.0.0/16",
+        status: "ANNOUNCED",
+        rtt: "112.0ms",
+      },
+      {
+        id: "AS6762",
+        name: "Sparkle Seabone",
+        city: "Rome, IT",
+        lat: 41.9,
+        lon: 12.49,
+        prefix: "195.223.0.0/16",
+        status: "ANNOUNCED",
+        rtt: "31.4ms",
+      },
+      {
+        id: "AS27699",
+        name: "Telecom Italia SP",
+        city: "São Paulo, BR",
+        lat: -23.55,
+        lon: -46.63,
+        prefix: "177.16.0.0/12",
+        status: "ANNOUNCED",
+        rtt: "135.0ms",
+      },
+      {
+        id: "AS37100",
+        name: "SEACOM Subsea Cable",
+        city: "Johannesburg, ZA",
+        lat: -26.2,
+        lon: 28.04,
+        prefix: "105.16.0.0/12",
+        status: "ANNOUNCED",
+        rtt: "148.0ms",
+      },
+      {
+        id: "AS4755",
+        name: "TATA Communications",
+        city: "Singapore, SG",
+        lat: 1.35,
+        lon: 103.81,
+        prefix: "180.87.0.0/17",
+        status: "ANNOUNCED",
+        rtt: "62.0ms",
+      },
     ];
 
     this.nodeMeshes = [];
 
     this.asNodes.forEach((node) => {
-      const pos = this.latLonToVector3(node.lat, node.lon, this.globeRadius * 1.015);
+      const pos = this.latLonToVector3(
+        node.lat,
+        node.lon,
+        this.globeRadius * 1.015,
+      );
       node.position = pos;
 
       const sphereGeo = new THREE.SphereGeometry(0.045, 12, 12);
       const sphereMat = new THREE.MeshBasicMaterial({
-        color: node.id === 'AS15169' || node.id === 'AS9498' ? 0xc99a55 : 0x74e7ff
+        color:
+          node.id === "AS15169" || node.id === "AS9498" ? 0xc99a55 : 0x74e7ff,
       });
       const sphere = new THREE.Mesh(sphereGeo, sphereMat);
       sphere.position.copy(pos);
@@ -485,7 +665,7 @@ export class InternetGlobeScene {
         color: 0x74e7ff,
         transparent: true,
         opacity: 0.55,
-        side: THREE.DoubleSide
+        side: THREE.DoubleSide,
       });
       const ring = new THREE.Mesh(ringGeo, ringMat);
       ring.position.copy(pos);
@@ -510,17 +690,32 @@ export class InternetGlobeScene {
     this.pulses = [];
 
     const routes = [
-      ['AS13335', 'AS15169'], ['AS15169', 'AS3356'], ['AS3356', 'AS7018'],
-      ['AS16509', 'AS9002'], ['AS9002', 'AS3257'], ['AS3257', 'AS1299'],
-      ['AS1299', 'AS9498'], ['AS9498', 'AS55836'], ['AS55836', 'AS4755'],
-      ['AS4755', 'AS2914'], ['AS2914', 'AS4637'], ['AS13335', 'AS2914'],
-      ['AS16509', 'AS27699'], ['AS9002', 'AS37100'], ['AS3257', 'AS6762'],
-      ['AS7018', 'AS16509'], ['AS20940', 'AS9002'], ['AS9498', 'AS4755']
+      ["AS13335", "AS15169"],
+      ["AS15169", "AS3356"],
+      ["AS3356", "AS7018"],
+      ["AS16509", "AS9002"],
+      ["AS9002", "AS3257"],
+      ["AS3257", "AS1299"],
+      ["AS1299", "AS9498"],
+      ["AS9498", "AS55836"],
+      ["AS55836", "AS4755"],
+      ["AS4755", "AS2914"],
+      ["AS2914", "AS4637"],
+      ["AS13335", "AS2914"],
+      ["AS16509", "AS27699"],
+      ["AS9002", "AS37100"],
+      ["AS3257", "AS6762"],
+      ["AS7018", "AS16509"],
+      ["AS20940", "AS9002"],
+      ["AS9498", "AS4755"],
+      ["AS13335", "AS9498"],
+      ["AS3356", "AS16509"],
+      ["AS27699", "AS4755"],
     ];
 
     routes.forEach(([idA, idB], idx) => {
-      const nodeA = this.asNodes.find(n => n.id === idA);
-      const nodeB = this.asNodes.find(n => n.id === idB);
+      const nodeA = this.asNodes.find((n) => n.id === idA);
+      const nodeB = this.asNodes.find((n) => n.id === idB);
       if (!nodeA || !nodeB) return;
 
       const pA = nodeA.position;
@@ -535,27 +730,46 @@ export class InternetGlobeScene {
       const points = curve.getPoints(36);
       const geo = new THREE.BufferGeometry().setFromPoints(points);
 
+      const isNewWarmRoute = idx >= 18;
       const isRareAmber = idx % 5 === 0;
       const baseOpacity = isRareAmber ? 0.35 : 0.22;
-      const arcColor = isRareAmber ? 0xc99a55 : 0x74e7ff;
+      const warmColors = [0xc99a55, 0xffc857, 0xf0a43c];
+      const arcColor = isNewWarmRoute
+        ? warmColors[idx - 18]
+        : isRareAmber
+          ? 0xc99a55
+          : 0x74e7ff;
 
       const mat = new THREE.LineBasicMaterial({
         color: arcColor,
         transparent: true,
-        opacity: baseOpacity
+        opacity: baseOpacity,
       });
 
       const line = new THREE.Line(geo, mat);
       line.userData = { nodeA, nodeB, isRareAmber, baseOpacity };
 
       this.arcsGroup.add(line);
-      this.activeRoutes.push({ curve, line, nodeA, nodeB, baseOpacity, isRareAmber });
+      this.activeRoutes.push({
+        curve,
+        line,
+        nodeA,
+        nodeB,
+        baseOpacity,
+        isRareAmber,
+      });
 
       // Traveling data pulses
       for (let p = 0; p < 2; p++) {
         const pulseGeo = new THREE.SphereGeometry(0.045, 6, 6);
         const pulseMat = new THREE.MeshBasicMaterial({
-          color: isRareAmber ? 0xc99a55 : (Math.random() > 0.4 ? 0x74e7ff : 0xffffff)
+          color: isNewWarmRoute
+            ? warmColors[idx - 18]
+            : isRareAmber
+              ? 0xc99a55
+              : Math.random() > 0.4
+                ? 0x74e7ff
+                : 0xffffff,
         });
         const pulseMesh = new THREE.Mesh(pulseGeo, pulseMat);
         this.pulsesGroup.add(pulseMesh);
@@ -564,8 +778,13 @@ export class InternetGlobeScene {
           mesh: pulseMesh,
           curve,
           progress: Math.random(),
-          speed: 0.003 + Math.random() * 0.004,
-          baseSpeed: 0.003 + Math.random() * 0.004
+          speed: 0,
+          baseSpeed:
+            idx % 5 === 0
+              ? 0.006 + Math.random() * 0.001
+              : idx % 3 === 0
+                ? 0.0007 + Math.random() * 0.0005
+                : 0.0022 + Math.random() * 0.0015,
         });
       }
     });
@@ -582,18 +801,18 @@ export class InternetGlobeScene {
   initEventHandlers() {
     const el = this.canvas;
 
-    el.addEventListener('mousedown', (e) => {
+    el.addEventListener("mousedown", (e) => {
       if (this.globeRevealed) {
         this.isDragging = true;
         this.previousMousePosition = { x: e.clientX, y: e.clientY };
       }
     });
 
-    window.addEventListener('mouseup', () => {
+    window.addEventListener("mouseup", () => {
       this.isDragging = false;
     });
 
-    window.addEventListener('mousemove', (e) => {
+    window.addEventListener("mousemove", (e) => {
       const clientX = e.clientX;
       const clientY = e.clientY;
       const rect = el.getBoundingClientRect();
@@ -616,30 +835,44 @@ export class InternetGlobeScene {
     });
 
     // Touch interaction for mobile
-    el.addEventListener('touchstart', (e) => {
-      if (this.globeRevealed && e.touches.length === 1) {
-        this.isDragging = true;
-        this.previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-      }
-    }, { passive: true });
+    el.addEventListener(
+      "touchstart",
+      (e) => {
+        if (this.globeRevealed && e.touches.length === 1) {
+          this.isDragging = true;
+          this.previousMousePosition = {
+            x: e.touches[0].clientX,
+            y: e.touches[0].clientY,
+          };
+        }
+      },
+      { passive: true },
+    );
 
-    window.addEventListener('touchend', () => {
+    window.addEventListener("touchend", () => {
       this.isDragging = false;
     });
 
-    window.addEventListener('touchmove', (e) => {
-      if (this.isDragging && this.globeRevealed && e.touches.length === 1) {
-        const deltaX = e.touches[0].clientX - this.previousMousePosition.x;
-        const deltaY = e.touches[0].clientY - this.previousMousePosition.y;
-        this.rotationVelocity.y = deltaX * 0.003;
-        this.rotationVelocity.x = deltaY * 0.003;
-        this.globeRotation.y += this.rotationVelocity.y;
-        this.globeRotation.x += this.rotationVelocity.x;
-        this.previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-      }
-    }, { passive: true });
+    window.addEventListener(
+      "touchmove",
+      (e) => {
+        if (this.isDragging && this.globeRevealed && e.touches.length === 1) {
+          const deltaX = e.touches[0].clientX - this.previousMousePosition.x;
+          const deltaY = e.touches[0].clientY - this.previousMousePosition.y;
+          this.rotationVelocity.y = deltaX * 0.003;
+          this.rotationVelocity.x = deltaY * 0.003;
+          this.globeRotation.y += this.rotationVelocity.y;
+          this.globeRotation.x += this.rotationVelocity.x;
+          this.previousMousePosition = {
+            x: e.touches[0].clientX,
+            y: e.touches[0].clientY,
+          };
+        }
+      },
+      { passive: true },
+    );
 
-    window.addEventListener('resize', () => this.onResize());
+    window.addEventListener("resize", () => this.onResize());
   }
 
   checkRaycasterIntersections(clientX, clientY) {
@@ -648,7 +881,7 @@ export class InternetGlobeScene {
       if (this.onNodeHover) {
         this.onNodeHover(null);
       }
-      this.canvas.style.cursor = 'default';
+      this.canvas.style.cursor = "default";
       return;
     }
 
@@ -672,13 +905,37 @@ export class InternetGlobeScene {
       }
     }
 
+    // Keep the rendered node tiny, but make its hover target easier to reach.
+    if (!frontHit) {
+      const hoverRadius = 28;
+      let closestDistance = hoverRadius;
+      const projected = new THREE.Vector3();
+
+      this.nodeMeshes.forEach((nodeMesh) => {
+        nodeMesh.getWorldPosition(worldPos);
+        const normal = worldPos.clone().sub(globeWorld).normalize();
+        const toCam = this.camera.position.clone().sub(worldPos).normalize();
+        if (normal.dot(toCam) <= 0.05) return;
+
+        projected.copy(worldPos).project(this.camera);
+        const nodeX = rect.left + (projected.x + 1) * 0.5 * rect.width;
+        const nodeY = rect.top + (1 - projected.y) * 0.5 * rect.height;
+        const distance = Math.hypot(clientX - nodeX, clientY - nodeY);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          frontHit = nodeMesh;
+        }
+      });
+    }
+
     if (frontHit) {
       const nodeData = frontHit.userData;
 
-      this.canvas.style.cursor = 'pointer';
+      this.canvas.style.cursor = "pointer";
 
       this.activeRoutes.forEach((route) => {
-        const isConnected = route.nodeA.id === nodeData.id || route.nodeB.id === nodeData.id;
+        const isConnected =
+          route.nodeA.id === nodeData.id || route.nodeB.id === nodeData.id;
         route.line.material.opacity = isConnected ? 0.85 : 0.04;
       });
 
@@ -686,7 +943,7 @@ export class InternetGlobeScene {
         this.onNodeHover(nodeData, clientX, clientY);
       }
     } else {
-      this.canvas.style.cursor = 'default';
+      this.canvas.style.cursor = "default";
       this.activeRoutes.forEach((route) => {
         route.line.material.opacity = route.baseOpacity;
       });
@@ -707,7 +964,7 @@ export class InternetGlobeScene {
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);
     if (this.sequenceTime >= 16.5) {
-      this.globeGroup.position.x = (window.innerWidth > 960) ? 1.6 : 0.0;
+      this.globeGroup.position.x = window.innerWidth > 960 ? 1.6 : 0.0;
     }
   }
 
@@ -742,24 +999,24 @@ export class InternetGlobeScene {
     // 14.8s+        GLOBE_ACTIVE       Protected BGP globe rotation & telemetry
     // =======================================================================
 
-    let state = 'COSMIC_SPACE';
-    let statusLabel = '[QUANTUM OBSERVER // COSMIC PARTICLES ACCELERATING]';
+    let state = "COSMIC_SPACE";
+    let statusLabel = "[QUANTUM OBSERVER // COSMIC PARTICLES ACCELERATING]";
 
     if (t >= 14.8) {
-      state = 'GLOBE_ACTIVE';
-      statusLabel = '[BGP TELEMETRY ACTIVE // 18 AS NODES // 720° ROTATION]';
+      state = "GLOBE_ACTIVE";
+      statusLabel = "[BGP TELEMETRY ACTIVE // 18 AS NODES // 720° ROTATION]";
     } else if (t >= 12.0) {
-      state = 'PUPIL_ZOOM';
-      statusLabel = '[TRANSITION // ENTERING CIRCULAR PUPIL PORTAL]';
+      state = "PUPIL_ZOOM";
+      statusLabel = "[TRANSITION // ENTERING CIRCULAR PUPIL PORTAL]";
     } else if (t >= 11.0) {
-      state = 'BLINK_OPENING';
-      statusLabel = '[APERTURE CYCLE // EYELIDS REOPENING]';
+      state = "BLINK_OPENING";
+      statusLabel = "[APERTURE CYCLE // EYELIDS REOPENING]";
     } else if (t >= 10.0) {
-      state = 'BLINK_CLOSING';
-      statusLabel = '[APERTURE CYCLE // SYNCHRONIZED BLINK]';
+      state = "BLINK_CLOSING";
+      statusLabel = "[APERTURE CYCLE // SYNCHRONIZED BLINK]";
     } else if (t >= 1.0) {
-      state = 'EYE_OBSERVING';
-      statusLabel = '[BIOMETRIC SYSTEM ONLINE // FORWARD OBSERVATION]';
+      state = "EYE_OBSERVING";
+      statusLabel = "[BIOMETRIC SYSTEM ONLINE // FORWARD OBSERVATION]";
     }
 
     if (this.currentState !== state) {
@@ -800,10 +1057,14 @@ export class InternetGlobeScene {
       // 2. Subtle mouse parallax for the eye (forward biometric lock)
       const cursorParallaxX = this.smoothedMouse.x * 0.14;
       const cursorParallaxY = this.smoothedMouse.y * 0.09;
-      this.eyeContainer.position.x += (cursorParallaxX - this.eyeContainer.position.x) * 0.08;
-      this.eyeContainer.position.y += (cursorParallaxY - this.eyeContainer.position.y) * 0.08;
-      this.eyeContainer.rotation.y += (cursorParallaxX * 0.22 - this.eyeContainer.rotation.y) * 0.08;
-      this.eyeContainer.rotation.x += (-cursorParallaxY * 0.18 - this.eyeContainer.rotation.x) * 0.08;
+      this.eyeContainer.position.x +=
+        (cursorParallaxX - this.eyeContainer.position.x) * 0.08;
+      this.eyeContainer.position.y +=
+        (cursorParallaxY - this.eyeContainer.position.y) * 0.08;
+      this.eyeContainer.rotation.y +=
+        (cursorParallaxX * 0.22 - this.eyeContainer.rotation.y) * 0.08;
+      this.eyeContainer.rotation.x +=
+        (-cursorParallaxY * 0.18 - this.eyeContainer.rotation.x) * 0.08;
 
       // 3. The Single Cosmic Blink (10.0s - 12.0s)
       let blinkVal = 0.0;
@@ -850,7 +1111,7 @@ export class InternetGlobeScene {
       this.globeRevealed = true;
 
       // Emergence transition (14.8s to 16.5s)
-      const targetGlobeX = (window.innerWidth > 960) ? 1.6 : 0.0;
+      const targetGlobeX = window.innerWidth > 960 ? 1.6 : 0.0;
 
       if (t < 16.5) {
         const emerge = (t - 14.8) / 1.7; // 0 to 1
@@ -860,7 +1121,8 @@ export class InternetGlobeScene {
         const s = Math.min(Math.pow(emerge, 0.7), 1.0);
         this.globeGroup.scale.set(s, s, s);
         // Smoothly glide position to the right
-        this.globeGroup.position.x = targetGlobeX * Math.sin(emerge * Math.PI * 0.5);
+        this.globeGroup.position.x =
+          targetGlobeX * Math.sin(emerge * Math.PI * 0.5);
       } else {
         this.camera.position.z = 15.0;
         this.globeGroup.scale.set(1, 1, 1);
@@ -870,7 +1132,8 @@ export class InternetGlobeScene {
       // Existing BGP Globe Rotation & Inertia (Continuous 720° / Perpetual)
       if (!this.isDragging) {
         this.rotationVelocity.x *= 0.95;
-        this.rotationVelocity.y = (this.rotationVelocity.y - 0.0014) * 0.95 + 0.0014;
+        this.rotationVelocity.y =
+          (this.rotationVelocity.y - 0.0014) * 0.95 + 0.0014;
         this.globeRotation.x += this.rotationVelocity.x;
         this.globeRotation.y += this.rotationVelocity.y;
       }
@@ -888,7 +1151,7 @@ export class InternetGlobeScene {
       // Breathing routing arcs
       this.activeRoutes.forEach((route, i) => {
         const breathe = Math.sin(t * 0.8 + i * 0.7) * 0.08;
-        const flap = (Math.sin(t * 0.12 + i * 4.1) > 0.975) ? 0.45 : 0.0;
+        const flap = Math.sin(t * 0.12 + i * 4.1) > 0.975 ? 0.45 : 0.0;
         route.line.material.opacity = route.baseOpacity + breathe + flap;
       });
 
@@ -914,4 +1177,3 @@ export class InternetGlobeScene {
     this.renderer.render(this.scene, this.camera);
   }
 }
-
