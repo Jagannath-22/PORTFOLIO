@@ -17,6 +17,7 @@
 </head>
 
 <body>
+  <canvas id="global-cosmic-bg" class="global-cosmic-bg"></canvas>
 
   <!-- ================================================================= -->
   <!-- MINIMAL HEADER NAVIGATION                                         -->
@@ -25,6 +26,7 @@
     <a href="#" class="nav-brand">JAGANNATH SAHOO</a>
     <nav class="nav-links">
       <a href="#work" class="nav-item">WORK</a>
+      <a href="#skills" class="nav-item">SKILLS</a>
       <a href="#about" class="nav-item">ABOUT</a>
       <a href="#research" class="nav-item">RESEARCH</a>
       <a href="#contact" class="nav-item">CONTACT</a>
@@ -69,78 +71,377 @@
       </div>
     </section>
 
-    <!-- SECTION 01 — SELECTED WORK -->
-    <section id="work" class="section-layout">
+    <!-- SECTION 01 — SELECTED WORK (AUTHKIT-INSPIRED 3D FROSTED GLASS DECK) -->
+    <section id="work" class="section-layout project-deck-section">
+      <!-- Ambient Faint Blueprint Grid Only (Seamless with Cosmic BG) -->
+      <div class="deck-ambient-atmosphere">
+        <div class="deck-blueprint-grid"></div>
+      </div>
+
+      <div class="section-container deck-container">
+        <!-- Eyebrow with flanking gradient hairline rules -->
+        <div class="authkit-eyebrow-wrapper">
+          <span class="eyebrow-line left"></span>
+          <span class="authkit-eyebrow">[ 01 ] SELECTED WORK</span>
+          <span class="eyebrow-line right"></span>
+        </div>
+
+        <div class="deck-header-block">
+          <h2 class="deck-headline">ENGINEERED SYSTEMS</h2>
+          <p class="deck-subline">
+            High-performance telemetry, kernel-level verification, and resilient distributed architectures.
+          </p>
+        </div>
+
+        <!-- 3D Overlapping Card Deck Viewport -->
+        <div class="project-deck-viewport">
+          <div id="project-card-deck" class="project-card-deck" role="region" aria-label="Selected Projects Carousel">
+
+            <!-- ========================================================= -->
+            <!-- CARD 01: AGENTSHIELD                                      -->
+            <!-- ========================================================= -->
+            <article class="project-glass-card" data-index="0">
+              <!-- Corner Screws / Registration Marks (AuthKit Style) -->
+              <span class="card-screw top-left">+</span>
+              <span class="card-screw top-right">+</span>
+              <span class="card-screw bottom-left">+</span>
+              <span class="card-screw bottom-right">+</span>
+
+              <!-- Top Bar: Index & Telemetry Dot -->
+              <div class="card-top-bar">
+                <div class="card-index-badge">
+                  <span class="card-pulse-dot"></span>
+                  <span class="card-index-text">PROJECT // 01</span>
+                </div>
+                <div class="card-status-label">ACTIVE PLATFORM</div>
+              </div>
+
+              <!-- Main Card Body -->
+              <div class="card-body">
+                <h3 class="card-project-title">AGENTSHIELD</h3>
+                <div class="card-category-track">eBPF / Network Security / Linux / Windows</div>
+                <p class="card-description">
+                  A network monitoring and threat detection platform. Utilizes eBPF tracing programs directly in the
+                  socket layer to inspect network packet exchanges with sub-microsecond latency overhead and deep
+                  telemetry observability.
+                </p>
+
+                <!-- Technical Specs Boxed Tags -->
+                <div class="card-spec-boxes">
+                  <span class="spec-box">[ KERNEL SPACE VERIFIER ]</span>
+                  <span class="spec-box">[ RING BUFFER TELEMETRY ]</span>
+                  <span class="spec-box">[ TC HOOK INGRESS/EGRESS ]</span>
+                </div>
+              </div>
+
+              <!-- Card Action / Bottom Pill -->
+              <div class="card-footer">
+                <a href="#contact" class="card-action-btn">
+                  <span>EXPLORE ARCHITECTURE</span>
+                  <span class="btn-arrow">↗</span>
+                </a>
+                <span class="card-meta-tag">v2.4.0 · PROD</span>
+              </div>
+            </article>
+
+            <!-- ========================================================= -->
+            <!-- CARD 02: ARM / TF-M                                       -->
+            <!-- ========================================================= -->
+            <article class="project-glass-card" data-index="1">
+              <span class="card-screw top-left">+</span>
+              <span class="card-screw top-right">+</span>
+              <span class="card-screw bottom-left">+</span>
+              <span class="card-screw bottom-right">+</span>
+
+              <div class="card-top-bar">
+                <div class="card-index-badge">
+                  <span class="card-pulse-dot"></span>
+                  <span class="card-index-text">PROJECT // 02</span>
+                </div>
+                <div class="card-status-label">SYSTEMS RESEARCH</div>
+              </div>
+
+              <div class="card-body">
+                <h3 class="card-project-title">ARM / TF-M SECURITY RESEARCH</h3>
+                <div class="card-category-track">Low-Level Systems / Hardware Security / ARM TrustZone / Microcontroller
+                </div>
+                <p class="card-description">
+                  Low-level security research involving ARM Trusted Firmware-M, memory boundaries, validation paths and
+                  exploitability analysis for embedded microcontroller architectures.
+                </p>
+
+                <div class="card-spec-boxes">
+                  <span class="spec-box">[ TRUSTZONE ISOLATION ]</span>
+                  <span class="spec-box">[ NS-BUFFER VALIDATION ]</span>
+                  <span class="spec-box">[ PRIVILEGE ESCALATION AUDIT ]</span>
+                </div>
+              </div>
+
+              <div class="card-footer">
+                <a href="#contact" class="card-action-btn">
+                  <span>RESEARCH DOSSIER</span>
+                  <span class="btn-arrow">↗</span>
+                </a>
+                <span class="card-meta-tag">ARMv8-M · ARCH</span>
+              </div>
+            </article>
+
+            <!-- ========================================================= -->
+            <!-- CARD 03: E-COMMERCE PLATFORM                              -->
+            <!-- ========================================================= -->
+            <article class="project-glass-card" data-index="2">
+              <span class="card-screw top-left">+</span>
+              <span class="card-screw top-right">+</span>
+              <span class="card-screw bottom-left">+</span>
+              <span class="card-screw bottom-right">+</span>
+
+              <div class="card-top-bar">
+                <div class="card-index-badge">
+                  <span class="card-pulse-dot"></span>
+                  <span class="card-index-text">PROJECT // 03</span>
+                </div>
+                <div class="card-status-label">DISTRIBUTED SYSTEM</div>
+              </div>
+
+              <div class="card-body">
+                <h3 class="card-project-title">E-COMMERCE PLATFORM</h3>
+                <div class="card-category-track">Full-Stack Engineering / React / Node.js / MongoDB / Distributed
+                  Telemetry</div>
+                <p class="card-description">
+                  Architected a high-concurrency distributed e-commerce backend and responsive client application with
+                  microservice-oriented data pipelines, idempotent transaction processing, and end-to-end operational
+                  observability.
+                </p>
+
+                <div class="card-spec-boxes">
+                  <span class="spec-box">[ IDEMPOTENT TRANSACTION PIPELINE ]</span>
+                  <span class="spec-box">[ EVENT STREAMING ]</span>
+                  <span class="spec-box">[ DISTRIBUTED CACHING ]</span>
+                </div>
+              </div>
+
+              <div class="card-footer">
+                <a href="#contact" class="card-action-btn">
+                  <span>SYSTEM ARCHITECTURE</span>
+                  <span class="btn-arrow">↗</span>
+                </a>
+                <span class="card-meta-tag">MICROSERVICES</span>
+              </div>
+            </article>
+
+            <!-- ========================================================= -->
+            <!-- CARD 04: LINUX KERNEL eBPF VERIFIER                       -->
+            <!-- (INHERIT / COPY THIS TEMPLATE TO ADD NEW PROJECTS)       -->
+            <!-- ========================================================= -->
+            <article class="project-glass-card" data-index="3">
+              <span class="card-screw top-left">+</span>
+              <span class="card-screw top-right">+</span>
+              <span class="card-screw bottom-left">+</span>
+              <span class="card-screw bottom-right">+</span>
+
+              <div class="card-top-bar">
+                <div class="card-index-badge">
+                  <span class="card-pulse-dot"></span>
+                  <span class="card-index-text">PROJECT // 04</span>
+                </div>
+                <div class="card-status-label">VULN ANALYSIS</div>
+              </div>
+
+              <div class="card-body">
+                <h3 class="card-project-title">LINUX KERNEL eBPF BOUNDS ENGINE</h3>
+                <div class="card-category-track">CVE-2025-44912 / Kernel Bounds Calculation &amp; Verifier Pruning</div>
+                <p class="card-description">
+                  Identified an integer truncation primitive within 64-bit bounds calculations during eBPF verifier
+                  state
+                  pruning. Coordinated vulnerability disclosure and proof-of-concept validation with upstream
+                  maintainers.
+                </p>
+
+                <div class="card-spec-boxes">
+                  <span class="spec-box">[ VERIFIER ALIVE PATH ]</span>
+                  <span class="spec-box">[ 64-BIT SCALAR BOUNDS ]</span>
+                  <span class="spec-box">[ EXPLOIT HARNESS POC ]</span>
+                </div>
+              </div>
+
+              <div class="card-footer">
+                <a href="#contact" class="card-action-btn">
+                  <span>SECURITY ADVISORY</span>
+                  <span class="btn-arrow">↗</span>
+                </a>
+                <span class="card-meta-tag">CVE DISCLOSED</span>
+              </div>
+            </article>
+
+          </div>
+        </div>
+
+        <!-- Slider Navigation Controls -->
+        <div class="deck-controls-container">
+          <button id="deck-prev-btn" class="deck-nav-btn prev" aria-label="Previous Project">
+            <span class="nav-arrow">←</span>
+            <span>PREV</span>
+          </button>
+
+          <div class="deck-pagination-group">
+            <div id="deck-dots" class="deck-dots-wrapper"></div>
+            <div id="deck-counter" class="deck-counter-label">
+              <span class="counter-cur">01</span><span class="counter-sep">/</span><span class="counter-total">04</span>
+            </div>
+          </div>
+
+          <button id="deck-next-btn" class="deck-nav-btn next" aria-label="Next Project">
+            <span>NEXT</span>
+            <span class="nav-arrow">→</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================================================================= -->
+    <!-- SECTION: CHRONO-SKILLS & ARCHITECTURE CONSTELLATION               -->
+    <!-- Dala-inspired: 3D Real-Time Particle Clock <-> Sand Timer Morph   -->
+    <!-- ================================================================= -->
+    <section id="skills" class="chrono-skills-section">
+      <!-- Ambient Faint CS Knowledge Cloud Background -->
+      <div class="ambient-keywords-matrix" aria-hidden="true">
+        <div class="ambient-matrix-lane lane-1">
+          <span>eBPF</span> · <span>Linux Kernel</span> · <span>XDP / TC Hooks</span> · <span>Kernel State
+            Pruning</span> · <span>Syscall Telemetry</span> · <span>Ring Buffer</span> · <span>ML-KEM / Kyber</span> ·
+          <span>Side-Channel Defense</span> · <span>TCP/IP Protocol Stack</span> · <span>QUIC / HTTP/3</span> ·
+          <span>0-RTT Handshake</span> · <span>ARM TrustZone</span> · <span>TF-M Firmware</span>
+        </div>
+        <div class="ambient-matrix-lane lane-2">
+          <span>Distributed Systems</span> · <span>Idempotent Pipelines</span> · <span>Event Streaming</span> ·
+          <span>High Availability</span> · <span>Load Balancing</span> · <span>Cache Invalidation</span> ·
+          <span>Microservices</span> · <span>Reverse Proxy</span> · <span>WAF Policy</span> · <span>TLS 1.3
+            Termination</span> · <span>DNS Anycast</span> · <span>WebSocket Gateway</span> · <span>Docker
+            Containerization</span>
+        </div>
+        <div class="ambient-matrix-lane lane-3">
+          <span>Burp Suite Pro</span> · <span>Wireshark Packet Analysis</span> · <span>Nmap Discovery</span> ·
+          <span>OWASP Top 10</span> · <span>SSRF Defense</span> · <span>SQL Injection Verifier</span> · <span>JWT /
+            OAuth 2.0 Flow</span> · <span>CORS / CSP Hardening</span> · <span>HTTP/2 Rapid Reset</span> ·
+          <span>RST_STREAM Abuse</span> · <span>ETW Telemetry</span> · <span>Sysmon Log Correlation</span> · <span>SIEM
+            Detection Engine</span>
+        </div>
+        <div class="ambient-matrix-lane lane-4">
+          <span>C++ Memory Safety</span> · <span>Python Automation</span> · <span>TypeScript AST</span> · <span>React
+            Virtual DOM</span> · <span>Next.js SSR</span> · <span>Three.js Shaders</span> · <span>WebGL 2.0</span> ·
+          <span>PostgreSQL ACID</span> · <span>MongoDB Replication</span> · <span>Redis Caching</span> · <span>AWS EC2 /
+            S3 / IAM / VPC</span> · <span>Kubernetes Orchestration</span> · <span>CI/CD Pipeline</span>
+        </div>
+      </div>
+
+      <!-- Main Content Grid -->
+      <div class="skills-content-container">
+
+        <!-- Left Column: Dala-style Monolithic Editorial Typography -->
+        <div class="skills-editorial-col">
+          <div class="skills-section-badge">[ SKILLS &amp; ARCHITECTURE ]</div>
+
+          <div id="skills-narrative-clock" class="skills-narrative-pane active">
+            <div class="skills-sub-badge saffron">
+              <span class="pulse-spark"></span>
+              <span>CHRONO PRECISION // REAL-TIME BENCHMARKS</span>
+            </div>
+            <h2 class="skills-display-headline">
+              SYSTEMS BENCHMARKED IN MICROSECONDS.
+            </h2>
+            <p class="skills-display-lead">
+              From microsecond packet inspection in kernel space to cycle-accurate side-channel analysis,
+              deep mastery is forged through foundational computer science and relentless execution.
+            </p>
+          </div>
+
+          <!-- Prominent 3D Anchor Skills Grid (The Core 18) -->
+          <div class="core-anchor-skills-wrapper">
+            <div class="anchor-skills-header">
+              <span class="anchor-label">CORE COMPETENCIES // 3D CONSTELLATION</span>
+              <span class="anchor-count">18 PRIMARY NODES</span>
+            </div>
+            <div class="core-anchor-skills-grid">
+              <div class="anchor-skill-chip" data-skill="cpp">C++</div>
+              <div class="anchor-skill-chip" data-skill="python">Python</div>
+              <div class="anchor-skill-chip" data-skill="js">JavaScript</div>
+              <div class="anchor-skill-chip" data-skill="react">React</div>
+              <div class="anchor-skill-chip" data-skill="node">Node.js</div>
+              <div class="anchor-skill-chip" data-skill="mongodb">MongoDB</div>
+              <div class="anchor-skill-chip" data-skill="sql">SQL</div>
+              <div class="anchor-skill-chip" data-skill="aws">AWS</div>
+              <div class="anchor-skill-chip" data-skill="docker">Docker</div>
+              <div class="anchor-skill-chip" data-skill="sysdesign">System Design</div>
+              <div class="anchor-skill-chip" data-skill="linux">Linux</div>
+              <div class="anchor-skill-chip" data-skill="networking">Networking</div>
+              <div class="anchor-skill-chip" data-skill="ebpf">eBPF</div>
+              <div class="anchor-skill-chip" data-skill="burp">Burp Suite</div>
+              <div class="anchor-skill-chip" data-skill="nmap">Nmap</div>
+              <div class="anchor-skill-chip" data-skill="wireshark">Wireshark</div>
+              <div class="anchor-skill-chip" data-skill="owasp">OWASP</div>
+              <div class="anchor-skill-chip" data-skill="websec">Web/API Security</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column: 3D Chrono Real-Time Particle Clock Stage -->
+        <div class="skills-visual-col">
+          <div class="chrono-stage-wrapper">
+            <canvas id="chrono-particles-canvas" class="chrono-canvas"></canvas>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 02 — ABOUT -->
+    <section id="about" class="section-layout section-about">
       <div class="section-container">
-        <div class="section-badge">[ 01 ] SELECTED WORK</div>
+        <div class="section-badge">[ 02 ] ABOUT</div>
 
-        <div class="editorial-case-list">
-
-          <!-- 01 AGENTSHIELD -->
-          <article class="case-study-item">
-            <div class="case-index">01</div>
-            <div class="case-content">
-              <h2 class="case-title">AGENTSHIELD</h2>
-              <div class="case-category">eBPF / Network Security / Linux / Windows</div>
-              <p class="case-summary">
-                A network monitoring and threat detection platform. Utilizes eBPF tracing programs directly in the
-                socket layer to inspect network packet exchanges with sub-microsecond latency overhead and deep
-                telemetry observability.
-              </p>
-              <div class="case-technical-specs">
-                <span>[ KERNEL SPACE VERIFIER ]</span>
-                <span>[ RING BUFFER TELEMETRY ]</span>
-                <span>[ TC HOOK INGRESS/EGRESS ]</span>
-              </div>
+        <div class="about-grid">
+          <!-- Left Column: Interactive Movable 3D Neural Globe -->
+          <div class="about-globe-stage">
+            <canvas id="neural-globe-canvas" class="about-globe-canvas"></canvas>
+            <div class="globe-hud-badge">
+              <span class="globe-hud-dot"></span>
+              <span class="globe-hud-text">NEURAL TOPOLOGY // 3D GRAPH</span>
+              <span class="globe-hud-sub">DRAG TO MOVE &amp; ROTATE</span>
             </div>
-          </article>
+          </div>
 
-          <!-- 02 ARM / TF-M -->
-          <article class="case-study-item">
-            <div class="case-index">02</div>
-            <div class="case-content">
-              <h2 class="case-title">ARM / TF-M SECURITY RESEARCH</h2>
-              <div class="case-category">Low-Level Systems / Hardware Security / ARM TrustZone / Microcontroller</div>
-              <p class="case-summary">
-                Low-level security research involving ARM Trusted Firmware-M, memory boundaries, validation paths and
-                exploitability analysis for embedded microcontroller architectures.
-              </p>
-              <div class="case-technical-specs">
-                <span>[ TRUSTZONE ISOLATION ]</span>
-                <span>[ NS-BUFFER VALIDATION ]</span>
-                <span>[ PRIVILEGE ESCALATION AUDIT ]</span>
-              </div>
+          <!-- Right Column: Biography and Core Disciplines -->
+          <div class="about-primary">
+            <h2 class="about-headline">
+              CURIOUS ABOUT HOW SYSTEMS ACTUALLY WORK.
+            </h2>
+            <p class="about-lead">
+              I build systems, investigate how they break, and turn complex problems into working software. My work sits
+              at the intersection of low-level systems engineering, offensive security research, network protocol
+              resilience, and distributed software.
+            </p>
+
+            <div class="about-disciplines-block">
+              <div class="disciplines-header">CORE DISCIPLINES</div>
+              <ul class="disciplines-list">
+                <li>— Cybersecurity</li>
+                <li>— Systems</li>
+                <li>— Networking</li>
+                <li>— Low-Level Software</li>
+                <li>— Full-Stack Engineering</li>
+                <li>— Security Research</li>
+              </ul>
             </div>
-          </article>
-
-          <!-- 03 E-COMMERCE -->
-          <article class="case-study-item">
-            <div class="case-index">03</div>
-            <div class="case-content">
-              <h2 class="case-title">E-COMMERCE PLATFORM</h2>
-              <div class="case-category">Full-Stack Engineering / React / Node.js / MongoDB / Distributed Telemetry
-              </div>
-              <p class="case-summary">
-                Architected a high-concurrency distributed e-commerce backend and responsive client application with
-                microservice-oriented data pipelines, idempotent transaction processing, and end-to-end operational
-                observability.
-              </p>
-              <div class="case-technical-specs">
-                <span>[ IDEMPOTENT TRANSACTION PIPELINE ]</span>
-                <span>[ EVENT STREAMING ]</span>
-                <span>[ DISTRIBUTED CACHING ]</span>
-              </div>
-            </div>
-          </article>
-
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- SECTION 02 — SYSTEMS & VULNERABILITY RESEARCH -->
+    <!-- SECTION 03 — SYSTEMS & VULNERABILITY RESEARCH -->
     <section id="research" class="section-layout">
       <div class="section-container">
-        <div class="section-badge">[ 02 ] SYSTEMS &amp; VULNERABILITY RESEARCH</div>
+        <div class="section-badge">[ 03 ] SYSTEMS &amp; VULNERABILITY RESEARCH</div>
 
         <div class="editorial-case-list">
 
@@ -183,75 +484,10 @@
       </div>
     </section>
 
-    <!-- SECTION 03 — ABOUT -->
-    <section id="about" class="section-layout">
-      <div class="section-container">
-        <div class="section-badge">[ 03 ] ABOUT</div>
-
-        <div class="about-grid">
-          <div class="about-primary">
-            <h2 class="about-headline">
-              CURIOUS ABOUT HOW SYSTEMS ACTUALLY WORK.
-            </h2>
-            <p class="about-lead">
-              I build systems, investigate how they break, and turn complex problems into working software. My work sits
-              at the intersection of low-level systems engineering, offensive security research, network protocol
-              resilience, and distributed software.
-            </p>
-          </div>
-
-          <div class="about-disciplines">
-            <div class="disciplines-header">CORE DISCIPLINES</div>
-            <ul class="disciplines-list">
-              <li>— Cybersecurity</li>
-              <li>— Systems</li>
-              <li>— Networking</li>
-              <li>— Low-Level Software</li>
-              <li>— Full-Stack Engineering</li>
-              <li>— Security Research</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 04 — TECHNICAL SECTION -->
-    <section id="tech" class="section-layout">
-      <div class="section-container">
-        <div class="section-badge">[ 04 ] TECHNICAL SECTION</div>
-
-        <div class="tech-index-wrapper">
-          <p class="tech-index-sub">TYPOGRAPHIC TECHNOLOGY INDEX</p>
-          <div class="tech-index-grid">
-            <div class="tech-tag">C</div>
-            <div class="tech-tag">C++</div>
-            <div class="tech-tag">Python</div>
-            <div class="tech-tag">JavaScript</div>
-            <div class="tech-tag">TypeScript</div>
-            <div class="tech-tag">Go</div>
-            <div class="tech-tag">Rust</div>
-            <div class="tech-tag">Linux</div>
-            <div class="tech-tag">eBPF</div>
-            <div class="tech-tag">TCP / IP</div>
-            <div class="tech-tag">BGP Routing</div>
-            <div class="tech-tag">ARM TrustZone</div>
-            <div class="tech-tag">GDB / LLDB</div>
-            <div class="tech-tag">Ghidra</div>
-            <div class="tech-tag">Wireshark</div>
-            <div class="tech-tag">Git</div>
-            <div class="tech-tag">Docker</div>
-            <div class="tech-tag">React</div>
-            <div class="tech-tag">Node.js</div>
-            <div class="tech-tag">Three.js / WebGL</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SECTION 05 — CONTACT -->
+    <!-- SECTION 04 — CONTACT & CORRESPONDENCE -->
     <section id="contact" class="section-layout section-contact">
       <div class="section-container">
-        <div class="section-badge">[ 05 ] CONTACT &amp; CORRESPONDENCE</div>
+        <div class="section-badge">[ 04 ] CONTACT &amp; CORRESPONDENCE</div>
 
         <div class="about-grid">
           <div>
