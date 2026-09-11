@@ -262,8 +262,7 @@ section[id] {
   text-decoration: none;
   padding: 12px 24px;
   border: 1px solid var(--border-light);
-  background: rgba(5, 8, 17, 0.6);
-  backdrop-filter: blur(6px);
+  background: #000000;
   transition: all 0.25s ease;
 }
 
@@ -1765,16 +1764,14 @@ section[id] {
 .pgp-card {
   padding: 28px 32px;
   border: 1px solid var(--border-subtle);
-  background: rgba(7, 11, 18, 0.4);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: #000000;
   transition: border-color 0.25s ease, background 0.25s ease;
 }
 
 .pgp-card.github-card:hover,
 .pgp-card.terminal-card:hover {
   border-color: rgba(116, 231, 255, 0.35);
-  background: rgba(7, 11, 18, 0.55);
+  background: #040810;
 }
 
 .terminal-meta-grid {
@@ -1824,7 +1821,7 @@ section[id] {
   justify-content: space-between;
   align-items: center;
   border: 1px solid var(--border-subtle);
-  background: rgba(5, 8, 17, 0.5);
+  background: #000000;
   padding: 6px 12px;
   font-family: var(--font-mono);
   font-size: 0.72rem;
