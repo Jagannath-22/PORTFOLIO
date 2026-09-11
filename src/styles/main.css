@@ -115,6 +115,27 @@ body {
 .nav-links {
   display: flex;
   gap: 36px;
+  position: relative;
+  align-items: center;
+}
+
+.nav-indicator {
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  height: 2px;
+  background-color: var(--accent-cyan);
+  box-shadow: 0 0 10px rgba(116, 231, 255, 0.65), 0 0 2px rgba(116, 231, 255, 0.9);
+  border-radius: 1px;
+  pointer-events: none;
+  opacity: 0;
+  width: 0;
+  transform: translateX(0);
+  transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+              width 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+              opacity 0.22s ease;
+  z-index: 5;
+  will-change: transform, width, opacity;
 }
 
 .nav-item {
@@ -124,18 +145,21 @@ body {
   text-transform: uppercase;
   color: var(--text-secondary);
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: color 0.25s ease;
   position: relative;
+  display: inline-block;
+  padding: 4px 0;
 }
 
-.nav-item:hover {
+.nav-item:hover,
+.nav-item.active {
   color: var(--text-primary);
 }
 
 .nav-item::after {
   content: '';
   position: absolute;
-  bottom: -4px;
+  bottom: -6px;
   left: 0;
   width: 0;
   height: 1px;
@@ -145,6 +169,14 @@ body {
 
 .nav-item:hover::after {
   width: 100%;
+}
+
+.nav-item.active::after {
+  opacity: 0;
+}
+
+section[id] {
+  scroll-margin-top: 84px;
 }
 
 /* ==========================================================================
@@ -1499,17 +1531,22 @@ body {
 }
 
 .about-lead {
-  font-family: var(--font-body);
-  font-size: 1.05rem;
-  line-height: 1.8;
+  font-family: 'JetBrains Mono', var(--font-mono), monospace;
+  font-size: 0.94rem;
+  line-height: 1.85;
+  letter-spacing: 0.015em;
   color: var(--text-secondary);
+  font-weight: 400;
 }
 
-/* Core Disciplines List on the Left under Bio Text */
+/* Core Disciplines List Box — Styled like the PGP card in contact section */
 .about-disciplines-block {
   margin-top: 36px;
-  padding-top: 24px;
-  border-top: 1px solid rgba(186, 215, 247, 0.1);
+  padding: 32px;
+  border: 1px solid var(--border-subtle);
+  background: rgba(7, 11, 18, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .disciplines-header {
@@ -1644,17 +1681,172 @@ body {
 }
 
 /* ==========================================================================
+   SECTION 03: RESEARCH & TELEMETRY BODIES
+   ========================================================================== */
+.section-research {
+  position: relative;
+  overflow: hidden;
+}
+
+.research-cosmic-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: auto;
+  opacity: 0.95;
+  cursor: grab;
+}
+
+.research-cosmic-canvas:active {
+  cursor: grabbing;
+}
+
+.section-research .section-container {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.section-research .section-container * {
+  pointer-events: auto;
+}
+
+/* ==========================================================================
    SECTION 05: CONTACT & ENCRYPTED DISPATCH
    ========================================================================== */
 .section-contact {
+  position: relative;
+  overflow: hidden;
   padding-bottom: 160px;
 }
 
+.contact-cosmic-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: auto;
+  opacity: 0.95;
+  cursor: grab;
+}
+
+.contact-cosmic-canvas:active {
+  cursor: grabbing;
+}
+
+.section-contact .section-container {
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.section-contact .section-container * {
+  pointer-events: auto;
+}
+
+.contact-cards-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 .pgp-card {
-  padding: 32px;
+  padding: 28px 32px;
   border: 1px solid var(--border-subtle);
   background: rgba(7, 11, 18, 0.4);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+
+.pgp-card.github-card:hover,
+.pgp-card.terminal-card:hover {
+  border-color: rgba(116, 231, 255, 0.35);
+  background: rgba(7, 11, 18, 0.55);
+}
+
+.terminal-meta-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 20px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+  line-height: 1.6;
+}
+
+.terminal-meta-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.meta-term-label {
+  color: var(--text-muted);
+  width: 75px;
+  flex-shrink: 0;
+  letter-spacing: 0.14em;
+  font-weight: 500;
+}
+
+.meta-term-val {
+  color: var(--text-secondary);
+}
+
+.meta-term-val.highlight {
+  color: #00ff66;
+  font-weight: 600;
+  text-shadow: none;
+}
+
+.terminal-status-tags {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.terminal-tag {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid var(--border-subtle);
+  background: rgba(5, 8, 17, 0.5);
+  padding: 6px 12px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  transition: border-color 0.2s ease;
+}
+
+.terminal-tag:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.terminal-tag .tag-left,
+.terminal-tag .tag-right {
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.terminal-tag .tag-name {
+  color: var(--text-secondary);
+}
+
+.terminal-tag .tag-status {
+  color: #00ff66;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  text-shadow: none;
 }
 
 .pgp-fingerprint {
@@ -1664,6 +1856,28 @@ body {
   color: var(--accent-cyan);
   margin-bottom: 18px;
   word-break: break-all;
+}
+
+.contact-github-link {
+  color: var(--accent-cyan);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.contact-github-link:hover {
+  color: #ffffff;
+  transform: translateX(4px);
+}
+
+.contact-github-link .btn-arrow {
+  transition: transform 0.2s ease;
+}
+
+.contact-github-link:hover .btn-arrow {
+  transform: translate(2px, -2px);
 }
 
 .pgp-sub {

@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="/src/styles/main.css" />
 </head>
@@ -24,7 +24,8 @@
   <!-- ================================================================= -->
   <header id="site-header" class="site-header">
     <a href="#" class="nav-brand">JAGANNATH SAHOO</a>
-    <nav class="nav-links">
+    <nav class="nav-links" id="site-nav-links">
+      <span class="nav-indicator" id="nav-indicator" aria-hidden="true"></span>
       <a href="#work" class="nav-item">WORK</a>
       <a href="#skills" class="nav-item">SKILLS</a>
       <a href="#about" class="nav-item">ABOUT</a>
@@ -63,7 +64,7 @@
             <span id="scene-status-label">[DEEP SPACE TELEMETRY // GALAXY FORMATION]</span>
           </div>
           <div class="telemetry-meta">
-            <span>[ 16,000+ NETWORK NODES ]</span>
+            <span>[ NETWORK NODES ]</span>
             <span>/</span>
             <span>[ GLOBAL ROUTING TELEMETRY ]</span>
           </div>
@@ -101,13 +102,11 @@
             <!-- CARD 01: AGENTSHIELD                                      -->
             <!-- ========================================================= -->
             <article class="project-glass-card" data-index="0">
-              <!-- Corner Screws / Registration Marks (AuthKit Style) -->
               <span class="card-screw top-left">+</span>
               <span class="card-screw top-right">+</span>
               <span class="card-screw bottom-left">+</span>
               <span class="card-screw bottom-right">+</span>
 
-              <!-- Top Bar: Index & Telemetry Dot -->
               <div class="card-top-bar">
                 <div class="card-index-badge">
                   <span class="card-pulse-dot"></span>
@@ -116,36 +115,34 @@
                 <div class="card-status-label">ACTIVE PLATFORM</div>
               </div>
 
-              <!-- Main Card Body -->
               <div class="card-body">
                 <h3 class="card-project-title">AGENTSHIELD</h3>
-                <div class="card-category-track">eBPF / Network Security / Linux / Windows</div>
+                <div class="card-category-track">EBPF / NETWORK SECURITY / LINUX / WINDOWS</div>
                 <p class="card-description">
-                  A network monitoring and threat detection platform. Utilizes eBPF tracing programs directly in the
-                  socket layer to inspect network packet exchanges with sub-microsecond latency overhead and deep
-                  telemetry observability.
+                  An autonomous host-defense and network threat detection platform that continuously observes kernel and
+                  network telemetry, analyzes behavior using signature and anomaly detection, and responds with
+                  automated containment.
                 </p>
 
-                <!-- Technical Specs Boxed Tags -->
                 <div class="card-spec-boxes">
-                  <span class="spec-box">[ KERNEL SPACE VERIFIER ]</span>
-                  <span class="spec-box">[ RING BUFFER TELEMETRY ]</span>
-                  <span class="spec-box">[ TC HOOK INGRESS/EGRESS ]</span>
+                  <span class="spec-box">[ KERNEL SPACE TELEMETRY ]</span>
+                  <span class="spec-box">[ HYBRID THREAT DETECTION ]</span>
+                  <span class="spec-box">[ AUTONOMOUS RESPONSE ]</span>
                 </div>
               </div>
 
-              <!-- Card Action / Bottom Pill -->
               <div class="card-footer">
-                <a href="#contact" class="card-action-btn">
+                <a href="https://github.com/Jagannath-22/AGENT_SHIElD" target="_blank" rel="noopener noreferrer"
+                  class="card-action-btn">
                   <span>EXPLORE ARCHITECTURE</span>
                   <span class="btn-arrow">↗</span>
                 </a>
-                <span class="card-meta-tag">v2.4.0 · PROD</span>
+                <span class="card-meta-tag">v2.x · ACTIVE</span>
               </div>
             </article>
 
             <!-- ========================================================= -->
-            <!-- CARD 02: ARM / TF-M                                       -->
+            <!-- CARD 02: SANDCRYPT                                        -->
             <!-- ========================================================= -->
             <article class="project-glass-card" data-index="1">
               <span class="card-screw top-left">+</span>
@@ -158,36 +155,36 @@
                   <span class="card-pulse-dot"></span>
                   <span class="card-index-text">PROJECT // 02</span>
                 </div>
-                <div class="card-status-label">SYSTEMS RESEARCH</div>
+                <div class="card-status-label">SECURE MESSAGING</div>
               </div>
 
               <div class="card-body">
-                <h3 class="card-project-title">ARM / TF-M SECURITY RESEARCH</h3>
-                <div class="card-category-track">Low-Level Systems / Hardware Security / ARM TrustZone / Microcontroller
-                </div>
+                <h3 class="card-project-title">SANDCRYPT</h3>
+                <div class="card-category-track">SECURE MESSAGING / SYSTEM DESIGN / OAUTH / OFFLINE-FIRST</div>
                 <p class="card-description">
-                  Low-level security research involving ARM Trusted Firmware-M, memory boundaries, validation paths and
-                  exploitability analysis for embedded microcontroller architectures.
+                  A secure real-time messaging platform engineered around persistent offline data, authentication,
+                  synchronization and resilient client-server communication.
                 </p>
 
                 <div class="card-spec-boxes">
-                  <span class="spec-box">[ TRUSTZONE ISOLATION ]</span>
-                  <span class="spec-box">[ NS-BUFFER VALIDATION ]</span>
-                  <span class="spec-box">[ PRIVILEGE ESCALATION AUDIT ]</span>
+                  <span class="spec-box">[ OAUTH AUTHENTICATION ]</span>
+                  <span class="spec-box">[ OFFLINE DATA PERSISTENCE ]</span>
+                  <span class="spec-box">[ REAL-TIME SYNC ]</span>
                 </div>
               </div>
 
               <div class="card-footer">
-                <a href="#contact" class="card-action-btn">
-                  <span>RESEARCH DOSSIER</span>
+                <a href="https://github.com/Jagannath-22/sand-crypt" target="_blank" rel="noopener noreferrer"
+                  class="card-action-btn">
+                  <span>EXPLORE ARCHITECTURE</span>
                   <span class="btn-arrow">↗</span>
                 </a>
-                <span class="card-meta-tag">ARMv8-M · ARCH</span>
+                <span class="card-meta-tag">v1.x · ACTIVE</span>
               </div>
             </article>
 
             <!-- ========================================================= -->
-            <!-- CARD 03: E-COMMERCE PLATFORM                              -->
+            <!-- CARD 03: SECUREVPN                                        -->
             <!-- ========================================================= -->
             <article class="project-glass-card" data-index="2">
               <span class="card-screw top-left">+</span>
@@ -200,38 +197,36 @@
                   <span class="card-pulse-dot"></span>
                   <span class="card-index-text">PROJECT // 03</span>
                 </div>
-                <div class="card-status-label">DISTRIBUTED SYSTEM</div>
+                <div class="card-status-label">WIREGUARD VPN</div>
               </div>
 
               <div class="card-body">
-                <h3 class="card-project-title">E-COMMERCE PLATFORM</h3>
-                <div class="card-category-track">Full-Stack Engineering / React / Node.js / MongoDB / Distributed
-                  Telemetry</div>
+                <h3 class="card-project-title">SECUREVPN</h3>
+                <div class="card-category-track">WIREGUARD / NETWORKING / CRYPTOGRAPHY / LINUX</div>
                 <p class="card-description">
-                  Architected a high-concurrency distributed e-commerce backend and responsive client application with
-                  microservice-oriented data pipelines, idempotent transaction processing, and end-to-end operational
-                  observability.
+                  A WireGuard-based VPN system focused on encrypted tunneling, peer management and secure network
+                  connectivity with a minimal, high-performance architecture.
                 </p>
 
                 <div class="card-spec-boxes">
-                  <span class="spec-box">[ IDEMPOTENT TRANSACTION PIPELINE ]</span>
-                  <span class="spec-box">[ EVENT STREAMING ]</span>
-                  <span class="spec-box">[ DISTRIBUTED CACHING ]</span>
+                  <span class="spec-box">[ WIREGUARD TUNNEL ]</span>
+                  <span class="spec-box">[ PEER KEY MANAGEMENT ]</span>
+                  <span class="spec-box">[ ENCRYPTED TRANSPORT ]</span>
                 </div>
               </div>
 
               <div class="card-footer">
-                <a href="#contact" class="card-action-btn">
-                  <span>SYSTEM ARCHITECTURE</span>
+                <a href="https://github.com/Jagannath-22/securevpn-wireguard-V3" target="_blank"
+                  rel="noopener noreferrer" class="card-action-btn">
+                  <span>EXPLORE ARCHITECTURE</span>
                   <span class="btn-arrow">↗</span>
                 </a>
-                <span class="card-meta-tag">MICROSERVICES</span>
+                <span class="card-meta-tag">v3.x · ACTIVE</span>
               </div>
             </article>
 
             <!-- ========================================================= -->
-            <!-- CARD 04: LINUX KERNEL eBPF VERIFIER                       -->
-            <!-- (INHERIT / COPY THIS TEMPLATE TO ADD NEW PROJECTS)       -->
+            <!-- CARD 04: PAYMENT GATEWAY                                  -->
             <!-- ========================================================= -->
             <article class="project-glass-card" data-index="3">
               <span class="card-screw top-left">+</span>
@@ -244,32 +239,157 @@
                   <span class="card-pulse-dot"></span>
                   <span class="card-index-text">PROJECT // 04</span>
                 </div>
-                <div class="card-status-label">VULN ANALYSIS</div>
+                <div class="card-status-label">DISTRIBUTED SYSTEM</div>
               </div>
 
               <div class="card-body">
-                <h3 class="card-project-title">LINUX KERNEL eBPF BOUNDS ENGINE</h3>
-                <div class="card-category-track">CVE-2025-44912 / Kernel Bounds Calculation &amp; Verifier Pruning</div>
+                <h3 class="card-project-title">PAYMENT GATEWAY</h3>
+                <div class="card-category-track">DISTRIBUTED SYSTEMS / PAYMENTS / API / EVENT-DRIVEN</div>
                 <p class="card-description">
-                  Identified an integer truncation primitive within 64-bit bounds calculations during eBPF verifier
-                  state
-                  pruning. Coordinated vulnerability disclosure and proof-of-concept validation with upstream
-                  maintainers.
+                  A fault-tolerant payment infrastructure designed around idempotent transactions, secure API
+                  processing, asynchronous events and reliable payment-state orchestration.
                 </p>
 
                 <div class="card-spec-boxes">
-                  <span class="spec-box">[ VERIFIER ALIVE PATH ]</span>
-                  <span class="spec-box">[ 64-BIT SCALAR BOUNDS ]</span>
-                  <span class="spec-box">[ EXPLOIT HARNESS POC ]</span>
+                  <span class="spec-box">[ IDEMPOTENT TRANSACTIONS ]</span>
+                  <span class="spec-box">[ EVENT-DRIVEN PROCESSING ]</span>
+                  <span class="spec-box">[ PAYMENT STATE MACHINE ]</span>
                 </div>
               </div>
 
               <div class="card-footer">
-                <a href="#contact" class="card-action-btn">
-                  <span>SECURITY ADVISORY</span>
+                <a href="https://github.com/Jagannath-22/Payment_Gateway" target="_blank" rel="noopener noreferrer"
+                  class="card-action-btn">
+                  <span>EXPLORE ARCHITECTURE</span>
                   <span class="btn-arrow">↗</span>
                 </a>
-                <span class="card-meta-tag">CVE DISCLOSED</span>
+                <span class="card-meta-tag">DESIGN → BUILDING</span>
+              </div>
+            </article>
+
+            <!-- ========================================================= -->
+            <!-- CARD 05: CRYPTOMAP                                        -->
+            <!-- ========================================================= -->
+            <article class="project-glass-card" data-index="4">
+              <span class="card-screw top-left">+</span>
+              <span class="card-screw top-right">+</span>
+              <span class="card-screw bottom-left">+</span>
+              <span class="card-screw bottom-right">+</span>
+
+              <div class="card-top-bar">
+                <div class="card-index-badge">
+                  <span class="card-pulse-dot"></span>
+                  <span class="card-index-text">PROJECT // 05</span>
+                </div>
+                <div class="card-status-label">IMAGE SECURITY</div>
+              </div>
+
+              <div class="card-body">
+                <h3 class="card-project-title">CRYPTOMAP</h3>
+                <div class="card-category-track">CRYPTOGRAPHY / IMAGE SECURITY / CHAOTIC SYSTEMS</div>
+                <p class="card-description">
+                  An image encryption system using chaotic-map transformations to create highly sensitive diffusion and
+                  permutation across image data.
+                </p>
+
+                <div class="card-spec-boxes">
+                  <span class="spec-box">[ CHAOTIC MAP TRANSFORM ]</span>
+                  <span class="spec-box">[ PIXEL DIFFUSION ]</span>
+                  <span class="spec-box">[ IMAGE ENCRYPTION ]</span>
+                </div>
+              </div>
+
+              <div class="card-footer">
+                <a href="https://github.com/Jagannath-22/Image_cryptogarphy" target="_blank" rel="noopener noreferrer"
+                  class="card-action-btn">
+                  <span>EXPLORE ALGORITHM</span>
+                  <span class="btn-arrow">↗</span>
+                </a>
+                <span class="card-meta-tag">v1.x · ACTIVE</span>
+              </div>
+            </article>
+
+            <!-- ========================================================= -->
+            <!-- CARD 06: STEGOSAFE                                        -->
+            <!-- ========================================================= -->
+            <article class="project-glass-card" data-index="5">
+              <span class="card-screw top-left">+</span>
+              <span class="card-screw top-right">+</span>
+              <span class="card-screw bottom-left">+</span>
+              <span class="card-screw bottom-right">+</span>
+
+              <div class="card-top-bar">
+                <div class="card-index-badge">
+                  <span class="card-pulse-dot"></span>
+                  <span class="card-index-text">PROJECT // 06</span>
+                </div>
+                <div class="card-status-label">DATA HIDING</div>
+              </div>
+
+              <div class="card-body">
+                <h3 class="card-project-title">STEGOSAFE</h3>
+                <div class="card-category-track">STEGANOGRAPHY / IMAGE SECURITY / DATA HIDING</div>
+                <p class="card-description">
+                  A covert image-data system designed to embed information within pixel structures while minimizing
+                  visible statistical and perceptual anomalies.
+                </p>
+
+                <div class="card-spec-boxes">
+                  <span class="spec-box">[ PIXEL-LEVEL HIDING ]</span>
+                  <span class="spec-box">[ LOW-VISIBILITY PAYLOAD ]</span>
+                  <span class="spec-box">[ STEGO ANALYSIS ]</span>
+                </div>
+              </div>
+
+              <div class="card-footer">
+                <a href="https://github.com/Jagannath-22/Stego_Detector_Tool" target="_blank" rel="noopener noreferrer"
+                  class="card-action-btn">
+                  <span>EXPLORE ALGORITHM</span>
+                  <span class="btn-arrow">↗</span>
+                </a>
+                <span class="card-meta-tag">v1.x · ACTIVE</span>
+              </div>
+            </article>
+
+            <!-- ========================================================= -->
+            <!-- CARD 07: AMAZON APP                                       -->
+            <!-- ========================================================= -->
+            <article class="project-glass-card" data-index="6">
+              <span class="card-screw top-left">+</span>
+              <span class="card-screw top-right">+</span>
+              <span class="card-screw bottom-left">+</span>
+              <span class="card-screw bottom-right">+</span>
+
+              <div class="card-top-bar">
+                <div class="card-index-badge">
+                  <span class="card-pulse-dot"></span>
+                  <span class="card-index-text">PROJECT // 07</span>
+                </div>
+                <div class="card-status-label">FULL STACK</div>
+              </div>
+
+              <div class="card-body">
+                <h3 class="card-project-title">AMAZON APP</h3>
+                <div class="card-category-track">E-COMMERCE / FULL STACK / API / DATABASE</div>
+                <p class="card-description">
+                  A full-stack e-commerce platform implementing product discovery, shopping workflows, user interaction
+                  and transactional application logic.
+                </p>
+
+                <div class="card-spec-boxes">
+                  <span class="spec-box">[ PRODUCT CATALOG ]</span>
+                  <span class="spec-box">[ CART / CHECKOUT FLOW ]</span>
+                  <span class="spec-box">[ FULL-STACK APPLICATION ]</span>
+                </div>
+              </div>
+
+              <div class="card-footer">
+                <a href="https://github.com/Jagannath-22/Amazon-App" target="_blank" rel="noopener noreferrer"
+                  class="card-action-btn">
+                  <span>EXPLORE APPLICATION</span>
+                  <span class="btn-arrow">↗</span>
+                </a>
+                <span class="card-meta-tag">v1.x · ACTIVE</span>
               </div>
             </article>
 
@@ -286,7 +406,7 @@
           <div class="deck-pagination-group">
             <div id="deck-dots" class="deck-dots-wrapper"></div>
             <div id="deck-counter" class="deck-counter-label">
-              <span class="counter-cur">01</span><span class="counter-sep">/</span><span class="counter-total">04</span>
+              <span class="counter-cur">01</span><span class="counter-sep">/</span><span class="counter-total">07</span>
             </div>
           </div>
 
@@ -327,10 +447,10 @@
             Detection Engine</span>
         </div>
         <div class="ambient-matrix-lane lane-4">
-          <span>C++ Memory Safety</span> · <span>Python Automation</span> · <span>TypeScript AST</span> · <span>React
+          <span>JavaScript V8 Engine</span> · <span>TypeScript AST</span> · <span>React
             Virtual DOM</span> · <span>Next.js SSR</span> · <span>Three.js Shaders</span> · <span>WebGL 2.0</span> ·
           <span>PostgreSQL ACID</span> · <span>MongoDB Replication</span> · <span>Redis Caching</span> · <span>AWS EC2 /
-            S3 / IAM / VPC</span> · <span>Kubernetes Orchestration</span> · <span>CI/CD Pipeline</span>
+            S3 / IAM / VPC</span> · <span>Kubernetes Orchestration</span> · <span>CI/CD Pipeline</span> · <span>Python Automation</span>
         </div>
       </div>
 
@@ -355,15 +475,13 @@
             </p>
           </div>
 
-          <!-- Prominent 3D Anchor Skills Grid (The Core 18) -->
+          <!-- Prominent 3D Anchor Skills Grid (The Core 17) -->
           <div class="core-anchor-skills-wrapper">
             <div class="anchor-skills-header">
-              <span class="anchor-label">CORE COMPETENCIES // 3D CONSTELLATION</span>
-              <span class="anchor-count">18 PRIMARY NODES</span>
+              <span class="anchor-label">CORE COMPETENCIES</span>
+              <span class="anchor-count">17 PRIMARY NODES</span>
             </div>
             <div class="core-anchor-skills-grid">
-              <div class="anchor-skill-chip" data-skill="cpp">C++</div>
-              <div class="anchor-skill-chip" data-skill="python">Python</div>
               <div class="anchor-skill-chip" data-skill="js">JavaScript</div>
               <div class="anchor-skill-chip" data-skill="react">React</div>
               <div class="anchor-skill-chip" data-skill="node">Node.js</div>
@@ -380,6 +498,7 @@
               <div class="anchor-skill-chip" data-skill="wireshark">Wireshark</div>
               <div class="anchor-skill-chip" data-skill="owasp">OWASP</div>
               <div class="anchor-skill-chip" data-skill="websec">Web/API Security</div>
+              <div class="anchor-skill-chip" data-skill="python">Python</div>
             </div>
           </div>
 
@@ -404,11 +523,6 @@
           <!-- Left Column: Interactive Movable 3D Neural Globe -->
           <div class="about-globe-stage">
             <canvas id="neural-globe-canvas" class="about-globe-canvas"></canvas>
-            <div class="globe-hud-badge">
-              <span class="globe-hud-dot"></span>
-              <span class="globe-hud-text">NEURAL TOPOLOGY // 3D GRAPH</span>
-              <span class="globe-hud-sub">DRAG TO MOVE &amp; ROTATE</span>
-            </div>
           </div>
 
           <!-- Right Column: Biography and Core Disciplines -->
@@ -439,7 +553,10 @@
     </section>
 
     <!-- SECTION 03 — SYSTEMS & VULNERABILITY RESEARCH -->
-    <section id="research" class="section-layout">
+    <section id="research" class="section-layout section-research">
+      <!-- 3D Cosmic Telemetry Bodies & Fly-Through Background Canvas -->
+      <canvas id="research-cosmic-canvas" class="research-cosmic-canvas"></canvas>
+
       <div class="section-container">
         <div class="section-badge">[ 03 ] SYSTEMS &amp; VULNERABILITY RESEARCH</div>
 
@@ -448,16 +565,16 @@
           <article class="case-study-item">
             <div class="case-index">R-01</div>
             <div class="case-content">
-              <h2 class="case-title">LINUX KERNEL eBPF BOUNDS INTEGER TRUNCATION</h2>
-              <div class="case-category">CVE-2025-44912 · Kernel Bounds Calculation &amp; Verifier Pruning</div>
+              <h2 class="case-title">WEB APPLICATION &amp; PROTOCOL SECURITY</h2>
+              <div class="case-category">HTTP / API SECURITY · BUG BOUNTY · ATTACK SURFACE ANALYSIS</div>
               <p class="case-summary">
-                Identified an integer truncation primitive within 64-bit bounds calculations during eBPF verifier state
-                pruning. Coordinated vulnerability disclosure and proof-of-concept validation with upstream maintainers.
+                Researching how modern web applications fail at protocol, parser, authentication and trust boundaries —
+                from request normalization and cache behavior to API authorization and business-logic flaws.
               </p>
               <div class="case-technical-specs">
-                <span class="status-amber">● DISCLOSED / PATCH COMMITTED</span>
-                <span>[ VERIFIER ALIVE PATH ]</span>
-                <span>[ 64-BIT SCALAR BOUNDS ]</span>
+                <span class="status-cyan">● ACTIVE RESEARCH</span>
+                <span>[ HTTP / REQUEST PARSING ]</span>
+                <span>[ API &amp; AUTHORIZATION ]</span>
               </div>
             </div>
           </article>
@@ -465,17 +582,18 @@
           <article class="case-study-item">
             <div class="case-index">R-02</div>
             <div class="case-content">
-              <h2 class="case-title">CONSTANT-TIME POST-QUANTUM LATTICE CRYPTO DEFENSE</h2>
-              <div class="case-category">ML-KEM / Kyber · Micro-Architectural Side-Channel Verification</div>
+              <h2 class="case-title">NETWORK PROTOCOL &amp; KERNEL SECURITY</h2>
+              <div class="case-category">NETWORKING / LINUX KERNEL · eBPF · PROTOCOL ANALYSIS</div>
               <p class="case-summary">
-                Formal analysis of polynomial multiplication routines in next-generation post-quantum lattice
-                cryptosystems to verify instruction-level constant-time execution against cache-timing and branch
-                predictor leaks.
+                Investigating security boundaries inside network protocols and operating-system networking stacks —
+                studying protocol state, parser behavior, packet flows and kernel enforcement paths to understand how
+                systems
+                observe and contain hostile traffic.
               </p>
               <div class="case-technical-specs">
-                <span class="status-cyan">● FORMAL RESEARCH</span>
-                <span>[ NTT POLYNOMIAL MULT ]</span>
-                <span>[ CACHE SIDE-CHANNEL RESILIENT ]</span>
+                <span class="status-cyan">● ACTIVE RESEARCH</span>
+                <span>[ PROTOCOL STATE &amp; PARSING ]</span>
+                <span>[ KERNEL / eBPF TELEMETRY ]</span>
               </div>
             </div>
           </article>
@@ -486,6 +604,9 @@
 
     <!-- SECTION 04 — CONTACT & CORRESPONDENCE -->
     <section id="contact" class="section-layout section-contact">
+      <!-- 3D Cosmic Wave & Transparent Floating Prism Background Canvas -->
+      <canvas id="contact-cosmic-canvas" class="contact-cosmic-canvas"></canvas>
+
       <div class="section-container">
         <div class="section-badge">[ 04 ] CONTACT &amp; CORRESPONDENCE</div>
 
@@ -498,19 +619,61 @@
               Available for systems engineering, security research initiatives, and technical architecture
               consultations.
             </p>
-            <a href="mailto:jagannathsahoo634@gmail.com" class="btn-editorial">
-              <span>jagannathsahoo634@gmail.com ↗</span>
+            <a href="mailto:bjagannathsahoo@gmail.com" class="btn-editorial">
+              <span>bjagannathsahoo@gmail.com ↗</span>
             </a>
           </div>
 
-          <div class="pgp-card">
-            <div class="disciplines-header">PGP PUBLIC KEY FINGERPRINT</div>
-            <div class="pgp-fingerprint">
-              9F82 4B11 7C20 EA39 8810<br />
-              DE2A 04B9 1337 D82E A401
+          <div class="contact-cards-stack">
+            <div class="pgp-card terminal-card">
+              <div class="disciplines-header">THREAT RESEARCH TERMINAL</div>
+              <div class="terminal-meta-grid">
+                <div class="terminal-meta-row">
+                  <span class="meta-term-label">MODE:</span>
+                  <span class="meta-term-val highlight">ACTIVE</span>
+                </div>
+                <div class="terminal-meta-row">
+                  <span class="meta-term-label">SCOPE:</span>
+                  <span class="meta-term-val">WEB / NETWORK / KERNEL</span>
+                </div>
+                <div class="terminal-meta-row">
+                  <span class="meta-term-label">METHOD:</span>
+                  <span class="meta-term-val">ANALYZE / EXPLOIT / DEFEND</span>
+                </div>
+              </div>
+
+              <div class="terminal-status-tags">
+                <div class="terminal-tag">
+                  <span class="tag-left">[ <span class="tag-name">ATTACK SURFACE</span></span>
+                  <span class="tag-right"><span class="tag-status">ONLINE</span> ]</span>
+                </div>
+                <div class="terminal-tag">
+                  <span class="tag-left">[ <span class="tag-name">PROTOCOL ANALYSIS</span></span>
+                  <span class="tag-right"><span class="tag-status">ONLINE</span> ]</span>
+                </div>
+                <div class="terminal-tag">
+                  <span class="tag-left">[ <span class="tag-name">SYSTEM TELEMETRY</span></span>
+                  <span class="tag-right"><span class="tag-status">ONLINE</span> ]</span>
+                </div>
+              </div>
+
+              <div class="pgp-sub">
+                RESEARCH ID: JG-SEC // 2026
+              </div>
             </div>
-            <div class="pgp-sub">
-              ALGORITHM: ED25519 · KEY ID: 0x1337D82E · ENCRYPTED DISPATCH
+
+            <div class="pgp-card github-card">
+              <div class="disciplines-header">SOURCE CODE &amp; REPOSITORIES</div>
+              <div class="pgp-fingerprint" style="margin-bottom: 12px;">
+                <a href="https://github.com/Jagannath-22/" target="_blank" rel="noopener noreferrer"
+                  class="contact-github-link">
+                  <span>https://github.com/Jagannath-22/</span>
+                  <span class="btn-arrow">↗</span>
+                </a>
+              </div>
+              <div class="pgp-sub">
+                IDENTITY: JAGANNATH-22 · REPOSITORIES · SECURITY RESEARCH
+              </div>
             </div>
           </div>
         </div>
@@ -521,7 +684,7 @@
     <footer class="site-footer">
       <div class="section-container footer-inner">
         <div>JAGANNATH SAHOO · CYBERSECURITY &amp; SYSTEMS ENGINEER</div>
-        <div>AUTONOMOUS 3D CYBERSECURITY ENGINE © 2026</div>
+        <div>OBSERVE · ANALYZE · BREAK · BUILD © 2026</div>
       </div>
     </footer>
 

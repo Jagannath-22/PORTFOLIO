@@ -3,6 +3,8 @@ import { CosmicBackgroundScene } from './scenes/CosmicBackgroundScene.js';
 import { InternetGlobeScene } from './scenes/InternetGlobeScene.js';
 import { MovableNeuralGlobeScene } from './scenes/MovableNeuralGlobeScene.js';
 import { ChronoParticleMorphScene } from './scenes/ChronoParticleMorphScene.js';
+import { ContactCosmicScene } from './scenes/ContactCosmicScene.js';
+import { ResearchCosmicScene } from './scenes/ResearchCosmicScene.js';
 import { NetworkTooltip } from './components/NetworkTooltip.js';
 import { ProjectCardDeck } from './components/ProjectCardDeck.js';
 
@@ -59,6 +61,22 @@ document.addEventListener('DOMContentLoaded', () => {
     chronoScene = new ChronoParticleMorphScene(chronoCanvas);
   }
 
+  // Initialize 3D Cosmic Wave & Transparent Floating Prisms for Section 04 (Contact)
+  const contactCanvas = document.getElementById('contact-cosmic-canvas');
+  const contactSection = document.getElementById('contact');
+  let contactScene = null;
+  if (contactCanvas) {
+    contactScene = new ContactCosmicScene(contactCanvas, contactSection);
+  }
+
+  // Initialize 3D Cosmic Telemetry Bodies & Fly-Through for Section 03 (Research)
+  const researchCanvas = document.getElementById('research-cosmic-canvas');
+  const researchSection = document.getElementById('research');
+  let researchScene = null;
+  if (researchCanvas) {
+    researchScene = new ResearchCosmicScene(researchCanvas, researchSection);
+  }
+
   // Helper function to update live HUD clock readout
   const updateLiveClock = () => {
     if (!liveClockEl) return;
@@ -86,11 +104,127 @@ document.addEventListener('DOMContentLoaded', () => {
       const progress = maxScroll > 0 ? scrollY / maxScroll : 0;
       globeScene.setScrollProgress(progress);
     }
+
+    if (researchScene) {
+      researchScene.updateScroll();
+    }
   };
 
   window.addEventListener('scroll', handleScroll, { passive: true });
   // Initial call to sync states
   handleScroll();
+
+  // Interactive Nav Indicator with Smooth Sliding Transition Across Sections
+  const initNavbarScrollIndicator = () => {
+    const navLinks = document.getElementById('site-nav-links');
+    const navIndicator = document.getElementById('nav-indicator');
+    if (!navLinks || !navIndicator) return;
+
+    const navItems = Array.from(navLinks.querySelectorAll('.nav-item'));
+    const sectionData = navItems.map(item => {
+      const href = item.getAttribute('href') || '';
+      const id = href.replace('#', '');
+      const el = document.getElementById(id);
+      return { id, el, item };
+    }).filter(s => s.el !== null);
+
+    let activeItem = null;
+
+    const setIndicator = (item) => {
+      if (!item) {
+        navIndicator.style.opacity = '0';
+        return;
+      }
+      const left = item.offsetLeft;
+      const width = item.offsetWidth;
+      navIndicator.style.transform = `translateX(${left}px)`;
+      navIndicator.style.width = `${width}px`;
+      navIndicator.style.opacity = '1';
+    };
+
+    const updateActiveSection = () => {
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const docHeight = document.documentElement.scrollHeight;
+
+      // When reaching near the bottom of page, highlight the last section (Contact)
+      const atBottom = (windowHeight + scrollY) >= (docHeight - 60);
+
+      let current = null;
+      if (atBottom && sectionData.length > 0) {
+        current = sectionData[sectionData.length - 1];
+      } else {
+        // Section is active when its top is within the upper 40% of viewport
+        const activationThreshold = windowHeight * 0.40;
+        for (let i = sectionData.length - 1; i >= 0; i--) {
+          const s = sectionData[i];
+          const rect = s.el.getBoundingClientRect();
+          if (rect.top <= activationThreshold && rect.bottom > 80) {
+            current = s;
+            break;
+          }
+        }
+      }
+
+      const nextItem = current ? current.item : null;
+      if (nextItem !== activeItem) {
+        if (activeItem) activeItem.classList.remove('active');
+        if (nextItem) nextItem.classList.add('active');
+        activeItem = nextItem;
+        setIndicator(activeItem);
+      } else if (activeItem) {
+        // Keep synced on layout or zoom shifts
+        setIndicator(activeItem);
+      }
+    };
+
+    // Smooth scroll on click and immediate line slide
+    navItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        const href = item.getAttribute('href') || '';
+        if (href.startsWith('#')) {
+          const id = href.replace('#', '');
+          const target = document.getElementById(id);
+          if (target) {
+            e.preventDefault();
+            if (activeItem) activeItem.classList.remove('active');
+            item.classList.add('active');
+            activeItem = item;
+            setIndicator(activeItem);
+            target.scrollIntoView({ behavior: 'smooth' });
+            history.pushState(null, null, `#${id}`);
+          }
+        }
+      });
+    });
+
+    const brandLink = document.querySelector('.nav-brand');
+    if (brandLink) {
+      brandLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        history.pushState(null, null, ' ');
+        if (activeItem) activeItem.classList.remove('active');
+        activeItem = null;
+        setIndicator(null);
+      });
+    }
+
+    window.addEventListener('scroll', updateActiveSection, { passive: true });
+    window.addEventListener('resize', () => {
+      if (activeItem) setIndicator(activeItem);
+    });
+
+    // Initial positioning
+    updateActiveSection();
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => {
+        updateActiveSection();
+      });
+    }
+  };
+
+  initNavbarScrollIndicator();
 
   // Master Render Loop
   const animate = () => {
@@ -108,6 +242,12 @@ document.addEventListener('DOMContentLoaded', () => {
       chronoScene.update();
       updateLiveClock();
     }
+    if (researchScene) {
+      researchScene.update();
+    }
+    if (contactScene) {
+      contactScene.update();
+    }
   };
   animate();
 
@@ -124,6 +264,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (chronoScene) {
       chronoScene.onResize();
+    }
+    if (researchScene) {
+      researchScene.onResize();
+    }
+    if (contactScene) {
+      contactScene.onResize();
     }
   });
 });

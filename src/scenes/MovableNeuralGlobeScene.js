@@ -84,10 +84,8 @@ export class MovableNeuralGlobeScene {
     this.networkGroup.rotation.y = -0.35;
     this.globeAnchor.add(this.networkGroup);
 
-    // Build the clean, uniform neural network
-    this.createDottedSubstrate();
-    this.createUniformLattice();
-    this.createNetworkEdges();
+    // Build the clean, uniform geodesic neural network (exact reference outer structure)
+    this.createUniformGeodesicLattice();
     this.createSignalPulses();
 
     // Setup drag and bounce interactions
@@ -95,114 +93,146 @@ export class MovableNeuralGlobeScene {
   }
 
   /**
-   * 1. Dotted Substrate Core
-   * Fine, uniform Fibonacci points that provide a faint structural volume
+   * Uniform Geodesic Neural Lattice (Reference Outer Structure)
+   * Built on a geodesic Icosahedron (subdivision 2) providing 100% uniform,
+   * equidistant node spacing across the sphere with crisp triangular wireframe edges.
    */
-  createDottedSubstrate() {
-    const count = 1400;
-    const radius = 1.78;
-    const positions = new Float32Array(count * 3);
-    const colors = new Float32Array(count * 3);
+  createUniformGeodesicLattice() {
+    const radius = 1.85;
+    // Outer geodesic icosahedron geometry from reference (detail 2 for uniform equilateral triangles)
+    const icoGeo = new THREE.IcosahedronGeometry(radius, 2);
+    const posAttr = icoGeo.attributes.position;
 
-    const colorPrimary = new THREE.Color(0x3a7ea8);
-    const colorSubtle = new THREE.Color(0x132a42);
-    const colorWhite = new THREE.Color(0xd6f4ff);
+    // 1. Extract unique vertices for uniform node points & edges
+    const uniqueMap = new Map();
+    this.nodePositions = [];
+    const uniqueIndices = [];
 
-    const phi = Math.PI * (Math.sqrt(5) - 1); // Golden angle
+    for (let i = 0; i < posAttr.count; i++) {
+      const x = posAttr.getX(i);
+      const y = posAttr.getY(i);
+      const z = posAttr.getZ(i);
+      const key = `${x.toFixed(3)},${y.toFixed(3)},${z.toFixed(3)}`;
 
-    for (let i = 0; i < count; i++) {
-      const y = 1 - (i / (count - 1)) * 2;
-      const radiusAtY = Math.sqrt(1 - y * y);
-      const theta = phi * i;
-
-      const x = Math.cos(theta) * radiusAtY * radius;
-      const py = y * radius;
-      const z = Math.sin(theta) * radiusAtY * radius;
-
-      positions[i * 3 + 0] = x;
-      positions[i * 3 + 1] = py;
-      positions[i * 3 + 2] = z;
-
-      const rand = Math.random();
-      const c = rand > 0.92 ? colorWhite : (rand > 0.4 ? colorPrimary : colorSubtle);
-      colors[i * 3 + 0] = c.r;
-      colors[i * 3 + 1] = c.g;
-      colors[i * 3 + 2] = c.b;
+      if (!uniqueMap.has(key)) {
+        const idx = this.nodePositions.length;
+        uniqueMap.set(key, idx);
+        this.nodePositions.push(new THREE.Vector3(x, y, z));
+        uniqueIndices.push(idx);
+      } else {
+        uniqueIndices.push(uniqueMap.get(key));
+      }
     }
 
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    // 2. Collect unique edges from geodesic triangles for clean 1px thin lines & data pulses
+    this.edges = [];
+    const edgeSet = new Set();
 
-    // Crisp dot texture with sharp circular edge (not fuzzy/glowy)
-    const dotTex = this.createCrispCircleTexture(32);
+    for (let t = 0; t < uniqueIndices.length; t += 3) {
+      const i1 = uniqueIndices[t];
+      const i2 = uniqueIndices[t + 1];
+      const i3 = uniqueIndices[t + 2];
 
-    const mat = new THREE.PointsMaterial({
-      size: 0.032,
+      const pairs = [
+        [i1, i2],
+        [i2, i3],
+        [i3, i1]
+      ];
+
+      pairs.forEach(([a, b]) => {
+        const edgeKey = a < b ? `${a}-${b}` : `${b}-${a}`;
+        if (!edgeSet.has(edgeKey)) {
+          edgeSet.add(edgeKey);
+          this.edges.push({
+            start: this.nodePositions[a],
+            end: this.nodePositions[b]
+          });
+        }
+      });
+    }
+
+    // 3. Delicate, Thin Geodesic Line Segments (single hairline per edge without mesh thickness)
+    const linePositions = new Float32Array(this.edges.length * 2 * 3);
+    const lineColors = new Float32Array(this.edges.length * 2 * 3);
+
+    for (let i = 0; i < this.edges.length; i++) {
+      const p1 = this.edges[i].start;
+      const p2 = this.edges[i].end;
+
+      linePositions[i * 6 + 0] = p1.x;
+      linePositions[i * 6 + 1] = p1.y;
+      linePositions[i * 6 + 2] = p1.z;
+      linePositions[i * 6 + 3] = p2.x;
+      linePositions[i * 6 + 4] = p2.y;
+      linePositions[i * 6 + 5] = p2.z;
+
+      // Exact Contact wave gradient colors
+      const theta1 = Math.atan2(p1.z, p1.x);
+      const phi1 = Math.asin(p1.y / radius);
+      const cf1 = (Math.sin(theta1 * 2.0 + phi1 * 1.5) + 1.0) * 0.5;
+
+      const theta2 = Math.atan2(p2.z, p2.x);
+      const phi2 = Math.asin(p2.y / radius);
+      const cf2 = (Math.sin(theta2 * 2.0 + phi2 * 1.5) + 1.0) * 0.5;
+
+      lineColors[i * 6 + 0] = 0.20 + cf1 * 0.25;
+      lineColors[i * 6 + 1] = 0.60 + cf1 * 0.35;
+      lineColors[i * 6 + 2] = 0.95 + cf1 * 0.05;
+
+      lineColors[i * 6 + 3] = 0.20 + cf2 * 0.25;
+      lineColors[i * 6 + 4] = 0.60 + cf2 * 0.35;
+      lineColors[i * 6 + 5] = 0.95 + cf2 * 0.05;
+    }
+
+    const lineGeo = new THREE.BufferGeometry();
+    lineGeo.setAttribute('position', new THREE.BufferAttribute(linePositions, 3));
+    lineGeo.setAttribute('color', new THREE.BufferAttribute(lineColors, 3));
+
+    const lineMat = new THREE.LineBasicMaterial({
       vertexColors: true,
-      map: dotTex,
       transparent: true,
-      opacity: 0.75,
+      opacity: 0.22, // Fine hairline lines
       blending: THREE.AdditiveBlending,
       depthWrite: false
     });
 
-    this.substrateMesh = new THREE.Points(geo, mat);
-    this.networkGroup.add(this.substrateMesh);
-  }
+    this.wireMesh = new THREE.LineSegments(lineGeo, lineMat);
+    this.networkGroup.add(this.wireMesh);
 
-  /**
-   * 2. Uniform Node Lattice
-   * Uniformly spaced Fibonacci nodes (~36 nodes) - Clean & Elegant
-   */
-  createUniformLattice() {
-    const nodeCount = 38;
-    const radius = 1.82;
-    this.nodePositions = [];
-
-    const phi = Math.PI * (Math.sqrt(5) - 1); // Golden ratio spiral
+    // 4. Node Points at every uniform vertex (kept identical as requested: "but node must be same..")
+    const nodeCount = this.nodePositions.length;
+    const nodePositionsArray = new Float32Array(nodeCount * 3);
+    const nodeColorsArray = new Float32Array(nodeCount * 3);
 
     for (let i = 0; i < nodeCount; i++) {
-      const y = 1 - (i / (nodeCount - 1)) * 2;
-      const radiusAtY = Math.sqrt(1 - y * y);
-      const theta = phi * i;
+      const v = this.nodePositions[i];
+      nodePositionsArray[i * 3 + 0] = v.x;
+      nodePositionsArray[i * 3 + 1] = v.y;
+      nodePositionsArray[i * 3 + 2] = v.z;
 
-      const x = Math.cos(theta) * radiusAtY * radius;
-      const py = y * radius;
-      const z = Math.sin(theta) * radiusAtY * radius;
+      const theta = Math.atan2(v.z, v.x);
+      const phi = Math.asin(v.y / radius);
+      const colFactor = (Math.sin(theta * 2.0 + phi * 1.5) + 1.0) * 0.5;
 
-      this.nodePositions.push(new THREE.Vector3(x, py, z));
+      // 1 in 3 nodes is crisp white highlight, others follow wave colors
+      if (i % 3 === 0) {
+        nodeColorsArray[i * 3 + 0] = 1.0;
+        nodeColorsArray[i * 3 + 1] = 1.0;
+        nodeColorsArray[i * 3 + 2] = 1.0;
+      } else {
+        nodeColorsArray[i * 3 + 0] = 0.20 + colFactor * 0.25;
+        nodeColorsArray[i * 3 + 1] = 0.60 + colFactor * 0.35;
+        nodeColorsArray[i * 3 + 2] = 0.95 + colFactor * 0.05;
+      }
     }
 
-    // Node points geometry
-    const positions = new Float32Array(nodeCount * 3);
-    const colors = new Float32Array(nodeCount * 3);
-
-    const colCyan = new THREE.Color(0x74e7ff);
-    const colWhite = new THREE.Color(0xffffff);
-
-    for (let i = 0; i < nodeCount; i++) {
-      const pos = this.nodePositions[i];
-      positions[i * 3 + 0] = pos.x;
-      positions[i * 3 + 1] = pos.y;
-      positions[i * 3 + 2] = pos.z;
-
-      // Key vertices are crisp white, others electric cyan
-      const isKey = (i % 5 === 0);
-      const c = isKey ? colWhite : colCyan;
-      colors[i * 3 + 0] = c.r;
-      colors[i * 3 + 1] = c.g;
-      colors[i * 3 + 2] = c.b;
-    }
-
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    const nodeGeo = new THREE.BufferGeometry();
+    nodeGeo.setAttribute('position', new THREE.BufferAttribute(nodePositionsArray, 3));
+    nodeGeo.setAttribute('color', new THREE.BufferAttribute(nodeColorsArray, 3));
 
     const nodeTex = this.createCrispCircleTexture(64);
-
-    const mat = new THREE.PointsMaterial({
-      size: 0.058, // Small, clean, uniform (no oversized blooms)
+    const nodeMat = new THREE.PointsMaterial({
+      size: 0.085,
       vertexColors: true,
       map: nodeTex,
       transparent: true,
@@ -211,62 +241,8 @@ export class MovableNeuralGlobeScene {
       depthWrite: false
     });
 
-    this.nodesMesh = new THREE.Points(geo, mat);
+    this.nodesMesh = new THREE.Points(nodeGeo, nodeMat);
     this.networkGroup.add(this.nodesMesh);
-  }
-
-  /**
-   * 3. Clean Nearest-Neighbor Network Edges (Not Meshy!)
-   * Connect only closest neighbors to maintain an open, architectural graph
-   */
-  createNetworkEdges() {
-    const linePositions = [];
-    this.edges = [];
-    const maxNeighbors = 3; // Maximum 3 connections per node to avoid meshy clutter
-    const maxDist = 1.35;   // Strict distance threshold
-
-    for (let i = 0; i < this.nodePositions.length; i++) {
-      const p1 = this.nodePositions[i];
-      const neighbors = [];
-
-      for (let j = 0; j < this.nodePositions.length; j++) {
-        if (i === j) continue;
-        const p2 = this.nodePositions[j];
-        const dist = p1.distanceTo(p2);
-        if (dist <= maxDist) {
-          neighbors.push({ index: j, dist });
-        }
-      }
-
-      // Sort by proximity
-      neighbors.sort((a, b) => a.dist - b.dist);
-
-      // Connect only closest neighbors
-      const count = Math.min(neighbors.length, maxNeighbors);
-      for (let k = 0; k < count; k++) {
-        const j = neighbors[k].index;
-        if (i < j) { // Avoid duplicate bidirectional lines
-          const p2 = this.nodePositions[j];
-          linePositions.push(p1.x, p1.y, p1.z);
-          linePositions.push(p2.x, p2.y, p2.z);
-          this.edges.push({ start: p1, end: p2 });
-        }
-      }
-    }
-
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
-
-    const mat = new THREE.LineBasicMaterial({
-      color: 0x3d7b9e,
-      transparent: true,
-      opacity: 0.55,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false
-    });
-
-    this.linesMesh = new THREE.LineSegments(geo, mat);
-    this.networkGroup.add(this.linesMesh);
   }
 
   /**
@@ -294,11 +270,11 @@ export class MovableNeuralGlobeScene {
     const pulseTex = this.createCrispCircleTexture(32);
 
     const pulseMat = new THREE.PointsMaterial({
-      size: 0.042,
-      color: 0x74e7ff,
+      size: 0.045,
+      color: 0x74e7ff, // Bright cosmic cyan from wave
       map: pulseTex,
       transparent: true,
-      opacity: 0.9,
+      opacity: 0.95,
       blending: THREE.AdditiveBlending,
       depthWrite: false
     });
@@ -308,19 +284,20 @@ export class MovableNeuralGlobeScene {
   }
 
   /**
-   * Helper: Crisp Circular Texture
+   * Helper: Crisp Circular Texture (Cosmic Wave Cyan & Azure)
    */
-  createCrispCircleTexture(size) {
+  createCrispCircleTexture(size = 32) {
     const canvas = document.createElement('canvas');
     canvas.width = size;
     canvas.height = size;
     const ctx = canvas.getContext('2d');
     const center = size / 2;
+    const radius = size * 0.44;
 
-    const grad = ctx.createRadialGradient(center, center, 0, center, center, center);
+    const grad = ctx.createRadialGradient(center, center, 0, center, center, radius);
     grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
-    grad.addColorStop(0.5, 'rgba(116, 231, 255, 0.9)');
-    grad.addColorStop(0.85, 'rgba(64, 150, 200, 0.25)');
+    grad.addColorStop(0.45, 'rgba(116, 231, 255, 0.95)');
+    grad.addColorStop(0.85, 'rgba(32, 92, 176, 0.3)');
     grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
     ctx.fillStyle = grad;
