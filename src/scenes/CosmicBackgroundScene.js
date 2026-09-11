@@ -24,8 +24,8 @@ export class CosmicBackgroundScene {
 
     // 1. Scene
     this.scene = new THREE.Scene();
-    // Maintain the same dark aesthetic as the bgp globe
-    this.scene.background = new THREE.Color(0x03050a);
+    // Pure solid black background
+    this.scene.background = new THREE.Color(0x000000);
 
     // 2. Camera
     this.camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);

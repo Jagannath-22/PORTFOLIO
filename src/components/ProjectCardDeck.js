@@ -89,33 +89,65 @@ export class ProjectCardDeck {
       }
     });
 
-    // Touch swipe and Mouse Drag support (Slide in both directions)
+    // Touch swipe and Mouse Drag support (Slide in both directions with high sensitivity)
     let startX = 0;
+    let startY = 0;
     let isDragging = false;
+    let dragTriggered = false;
+    const DRAG_THRESHOLD = 16; // Highly sensitive: 16px movement triggers slide (was 45px)
     const viewport = this.container.closest('.project-deck-viewport') || this.container;
 
-    const onPointerDown = (clientX) => {
+    const onPointerDown = (clientX, clientY) => {
       isDragging = true;
+      dragTriggered = false;
       startX = clientX;
+      startY = clientY || 0;
       viewport.classList.add('is-dragging');
+    };
+
+    const onPointerMove = (clientX, clientY) => {
+      if (!isDragging || dragTriggered) return;
+      const diffX = clientX - startX;
+      const diffY = clientY ? Math.abs(clientY - startY) : 0;
+
+      // When horizontal movement dominates and passes sensitive threshold
+      if (Math.abs(diffX) > diffY) {
+        if (diffX < -DRAG_THRESHOLD) {
+          dragTriggered = true;
+          this.next(); // Slide next
+        } else if (diffX > DRAG_THRESHOLD) {
+          dragTriggered = true;
+          this.prev(); // Slide prev
+        }
+      }
     };
 
     const onPointerUp = (clientX) => {
       if (!isDragging) return;
       isDragging = false;
       viewport.classList.remove('is-dragging');
-      const diff = clientX - startX;
-      if (diff < -45) {
-        this.next(); // Dragged left -> show next
-      } else if (diff > 45) {
-        this.prev(); // Dragged right -> show prev
+
+      if (!dragTriggered && typeof clientX === 'number') {
+        const diff = clientX - startX;
+        if (diff < -DRAG_THRESHOLD) {
+          this.next();
+        } else if (diff > DRAG_THRESHOLD) {
+          this.prev();
+        }
       }
+      dragTriggered = false;
     };
 
     // Mouse drag
     viewport.addEventListener('mousedown', (e) => {
       if (e.target.closest('a') || e.target.closest('button')) return;
-      onPointerDown(e.clientX);
+      onPointerDown(e.clientX, e.clientY);
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        onPointerMove(e.clientX, e.clientY);
+      }
     });
 
     window.addEventListener('mouseup', (e) => {
@@ -126,11 +158,38 @@ export class ProjectCardDeck {
 
     // Touch swipe
     viewport.addEventListener('touchstart', (e) => {
-      onPointerDown(e.changedTouches[0].screenX);
+      const touch = e.changedTouches[0];
+      if (touch) {
+        onPointerDown(touch.clientX, touch.clientY);
+      }
+    }, { passive: true });
+
+    viewport.addEventListener('touchmove', (e) => {
+      if (isDragging) {
+        const touch = e.changedTouches[0];
+        if (touch) {
+          onPointerMove(touch.clientX, touch.clientY);
+        }
+      }
     }, { passive: true });
 
     viewport.addEventListener('touchend', (e) => {
-      onPointerUp(e.changedTouches[0].screenX);
+      const touch = e.changedTouches[0];
+      onPointerUp(touch ? touch.clientX : null);
+    }, { passive: true });
+
+    // Trackpad / horizontal wheel swipe
+    let wheelCooldown = false;
+    viewport.addEventListener('wheel', (e) => {
+      const deltaX = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : (e.shiftKey ? e.deltaY : 0);
+      if (Math.abs(deltaX) > 18) {
+        if (!wheelCooldown) {
+          wheelCooldown = true;
+          if (deltaX > 0) this.next();
+          else this.prev();
+          setTimeout(() => { wheelCooldown = false; }, 360);
+        }
+      }
     }, { passive: true });
   }
 
@@ -144,8 +203,12 @@ export class ProjectCardDeck {
 
   goToIndex(index) {
     if (index === this.currentIndex || this.isTransitioning) return;
+    this.isTransitioning = true;
     this.currentIndex = index;
     this.updateCardPositions();
+    setTimeout(() => {
+      this.isTransitioning = false;
+    }, 320);
   }
 
   updateCardPositions() {

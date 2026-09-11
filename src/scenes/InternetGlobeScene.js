@@ -43,7 +43,7 @@ export class InternetGlobeScene {
     });
     this.renderer.setSize(canvas.clientWidth, canvas.clientHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.renderer.setClearColor(0x030509, 1.0); // Near-black background
+    this.renderer.setClearColor(0x000000, 1.0); // Pure solid black background
 
     this.clock = new THREE.Clock();
     this.raycaster = new THREE.Raycaster();
@@ -87,10 +87,6 @@ export class InternetGlobeScene {
     const dirLight = new THREE.DirectionalLight(0xd4a574, 1.0);
     dirLight.position.set(10, 12, 10);
     this.scene.add(dirLight);
-
-    const cyanRim = new THREE.PointLight(0x74e7ff, 2.0, 40);
-    cyanRim.position.set(-10, -6, 8);
-    this.scene.add(cyanRim);
   }
 
   // =========================================================================

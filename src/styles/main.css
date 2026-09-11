@@ -5,9 +5,9 @@
    ========================================================================== */
 
 :root {
-  --bg-darkest: #03050a;
-  --bg-mid: #050811;
-  --bg-elevated: #070b12;
+  --bg-darkest: #000000;
+  --bg-mid: #000000;
+  --bg-elevated: #000000;
 
   --text-primary: #f2f4f7;
   --text-secondary: #8993a4;
@@ -25,7 +25,7 @@
   --font-mono: 'Space Mono', monospace;
 
   /* AuthKit Midnight Glass Tokens */
-  --color-midnight-canvas: #03050a;
+  --color-midnight-canvas: #000000;
   --color-steel-plate: #2f343e;
   --color-fog-veil: #9da7ba;
   --color-moon-mist: #c7d3ea;
@@ -132,8 +132,8 @@ body {
   width: 0;
   transform: translateX(0);
   transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
-              width 0.38s cubic-bezier(0.22, 1, 0.36, 1),
-              opacity 0.22s ease;
+    width 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.22s ease;
   z-index: 5;
   will-change: transform, width, opacity;
 }
@@ -476,7 +476,10 @@ section[id] {
   /* Deep Blackish Blue */
   border: 1px solid rgba(255, 255, 255, 0.06);
   /* Very thin hairline border */
-  box-shadow: none;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+  backdrop-filter: none !important;
   /* NO blurry shadows */
   display: flex;
   flex-direction: column;
@@ -495,13 +498,13 @@ section[id] {
   opacity: 1;
   z-index: 10;
   pointer-events: auto;
-  background: #050814;
+  background: #000000;
   /* Solid Blackish Blue */
-  border: 1px solid rgba(116, 231, 255, 0.55);
+  border: 1px solid rgba(87, 110, 114, 0.55);
   /* Very thin Watery Bluish hairline border */
-  box-shadow: none;
-  /* NO blurry shadows */
-  filter: none;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
 }
 
 /* Left Flanking Card — Dimmed opacity so info doesn't interrupt the center card */
@@ -516,15 +519,17 @@ section[id] {
   /* Deeper Blackish Blue */
   border: 1px solid rgba(255, 255, 255, 0.04);
   /* Ultra thin */
-  box-shadow: none;
-  /* NO blurry shadows */
-  filter: none;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
 }
 
 .project-glass-card.is-left:hover {
   opacity: 0.85;
   border-color: rgba(116, 231, 255, 0.35);
   transform: translate3d(-360px, 0, -20px) scale(0.88) rotateY(12deg);
+  box-shadow: none !important;
+  filter: none !important;
 }
 
 /* Right Flanking Card — Dimmed opacity so info doesn't interrupt the center card */
@@ -539,15 +544,17 @@ section[id] {
   /* Deeper Blackish Blue */
   border: 1px solid rgba(255, 255, 255, 0.04);
   /* Ultra thin */
-  box-shadow: none;
-  /* NO blurry shadows */
-  filter: none;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
 }
 
 .project-glass-card.is-right:hover {
   opacity: 0.85;
   border-color: rgba(116, 231, 255, 0.35);
   transform: translate3d(360px, 0, -20px) scale(0.88) rotateY(-12deg);
+  box-shadow: none !important;
+  filter: none !important;
 }
 
 /* Aside Card Info Suppression — Keep body info from competing with the middle center card */
@@ -2748,5 +2755,5 @@ section[id] {
   height: 100vh;
   z-index: -100;
   pointer-events: none;
-  background-color: var(--bg-primary);
+  background-color: #000000;
 }
